@@ -1,0 +1,53 @@
+@mixin mobile-only {
+    @media screen and (max-width : map-get($breakpoint, mobile)) {
+        @content;        
+    }
+}
+@mixin tablette {
+    @media screen and (min-width: map-get($breakpoint, tablette1)) 
+    and (max-width: map-get($breakpoint, tablette2)) {
+        @content;        
+    }
+}
+@mixin desktop {
+    @media screen and (min-width : map-get($breakpoint, desktop)) {
+        @content;        
+    }
+}
+@mixin mini-mobile {
+    @media screen and (max-width : map-get($breakpoint, micro)) {
+        @content;        
+    }
+}
+@mixin mini-mobile2 {
+    @media screen and (min-width: map-get($breakpoint, micro2))
+    and (max-width: map-get($breakpoint, mini)) {
+        @content;        
+    }
+}
+@mixin coeur-titre1 {
+    opacity: 1;
+    position: absolute;
+    left: 15%;
+    transition: opacity 500ms; 
+    &:hover, &active{
+        opacity: 0;
+    }
+}
+@mixin coeur-titre2{
+    background-image: linear-gradient($couleur-primaire, $couleur-secondaire);
+    -webkit-background-clip: text;
+    -moz-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    /*color: $couleur-primaire;linear-gradient($couleur-primaire, $couleur-secondaire);*/
+                position: absolute;
+                left: 15%;
+                opacity: 0;
+                transform :scale(1);
+                transition: opacity 500ms; 
+                &:hover, &active{
+                    opacity: 1;
+                    transform :scale(1.2)
+                }
+}

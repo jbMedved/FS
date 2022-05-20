@@ -1,0 +1,48 @@
+//on commence par les imports
+@import "./base/normalise";
+@import "./base/fonts";
+@import "./utils/variables";
+@import "./utils/tables";
+@import "./utils/mixins";
+
+body {
+    max-width: 767px;
+    margin: auto;
+    position: relative;
+
+  }
+header {
+    object-fit: scale-down;
+    display: flex;
+    border: 1px solid black;
+    margin-bottom: 10px;
+  }
+
+#entreprise {
+    flex: 5;
+    padding-top: 5%;
+    padding-bottom: 5%;
+    display: flex;
+    justify-content: center;
+}
+#menu {
+    font-size: 25px;
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;}
+
+#logo {
+    object-fit: cover;
+    max-width: 100%;
+}
+
+
+.contenu{
+  border: 1px solid black;
+  text-align: center;
+}
+.titre {
+    border: 1px solid black;
+    text-align: center;
+}
