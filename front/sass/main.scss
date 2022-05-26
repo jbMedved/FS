@@ -12,16 +12,15 @@ body {
 
   }
 header {
-    object-fit: scale-down;
     display: flex;
-    border: 1px solid black;
+    // border: 1px solid black;
     margin-bottom: 10px;
   }
 
 #entreprise {
     flex: 5;
-    padding-top: 5%;
-    padding-bottom: 5%;
+    // padding-top: 5%;
+    // padding-bottom: 5%;
     display: flex;
     justify-content: center;
 }
@@ -30,19 +29,71 @@ header {
     flex: 1;
     display: flex;
     justify-content: center;
-    align-items: center;}
+    align-items: center;
+    display:none
+  }
 
 #logo {
     object-fit: cover;
     max-width: 100%;
 }
-
-
-.contenu{
+h2{
   border: 1px solid black;
+  border-radius: 50px;
+  padding: 16%;
+  width: 68%;
   text-align: center;
+  margin-top: -1px;
+  margin-bottom: 0px;
 }
-.titre {
-    border: 1px solid black;
-    text-align: center;
+
+#access {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.connection{
+  margin-top: 3%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  border-radius: 50px;
+  width: 90%;
+  border: 3px solid black;
+  flex: 1;
+
+}
+.contenu{
+  width: 90%;
+  display: flex;
+  flex-direction: column;
+  h3 {
+    margin-bottom: 1%;
+  align-self: flex-start;
+  }
+}
+input{
+  border-radius: 10px;
+  align-items: center;
+}
+button{
+  margin: auto;
+  margin-top: 5%;
+  margin-bottom: 5%;
+  display: flex;
+}
+
+
+
+footer {
+  margin-bottom: 2%;
+  ul {
+    display: flex;
+    justify-content: space-evenly;
+  }
+  a:link {
+    text-decoration: none;
+    color: black;
+  }
 }
