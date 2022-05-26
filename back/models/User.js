@@ -1,12 +1,14 @@
 // ici on va mettre notre schema pour la table user
-const userSchema = mongoose.Schema({
-    id: { type: Number, required: true, unique: true }, // id	INTEGER	auto_increment	primary key
-    email: { type: String, required: true },            // email	varchar (100)	NOT NULL	unique
-    password: { type: String, required: true },         // password	varchar(100)	NOT NULL
-    pseudo: { type: String, required: true },	        // pseudo	varchar(100)	NOT NULL
-    admin: { type: Boolean }		                    // admin	boolean		
-})
+class User {
+    // on crée le modele User
+    constructor(email, password, lastName, FirstName) {
+        this.email = email;
+        this.password = password;
+        this.pseudo = FirstName + " " + lastName;
+    }
+    //on utilise l'utilitaire de cryptage du mot de passe : BCRYPT
 
-userSchema.plugin(uniqueValidator);
+}
 
-module.exports = mongoose.model('User', userSchema);
+// on exporte notre classe User
+module.exports = User;
