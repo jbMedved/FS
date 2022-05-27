@@ -355,13 +355,12 @@ header {
   justify-content: center;
 }
 
-#menu {
+#menu_icon {
   font-size: 25px;
   flex: 1;
   display: flex;
   justify-content: center;
   align-items: center;
-  display: none;
 }
 
 #logo {
@@ -424,6 +423,7 @@ footer {
 footer ul {
   display: flex;
   justify-content: space-evenly;
+  padding: 0px;
 }
 footer a:link {
   text-decoration: none;

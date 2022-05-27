@@ -24,13 +24,13 @@ header {
     display: flex;
     justify-content: center;
 }
-#menu {
+#menu_icon {
     font-size: 25px;
     flex: 1;
     display: flex;
     justify-content: center;
     align-items: center;
-    display:none
+    // display:none
   }
 
 #logo {
@@ -91,6 +91,7 @@ footer {
   ul {
     display: flex;
     justify-content: space-evenly;
+    padding: 0px;
   }
   a:link {
     text-decoration: none;
