@@ -16,9 +16,6 @@ const userRoutes = require('./routes/user')
 // ici on fera appel a notre base de données SQL
 const mysql = require('./database/mysql')
 
-// intercepte les requetes qui contiennent du JSON et l'envoie sur le req
-app.use(express.json());
-
 //ici on met en place l'agent de sécurité : CORS
 app.use((req, res, next) => {
     res.setHeader('Access-Control-Allow-Origin', '*');
@@ -27,9 +24,12 @@ app.use((req, res, next) => {
     next();
 });
 
+// intercepte les requetes qui contiennent du JSON et l'envoie sur le req
+app.use(express.json());
+
 //pour tout ce qui passe par la racine api/post, 
 //utiliser la logique contenue dans routes/post.js
-app.use('/api/post', postRoutes);
+app.use('/api/posts', postRoutes);
 
 //pour tout ce qui passe par la racine api/auth, 
 //utiliser la logique contenue dans routes/user.js

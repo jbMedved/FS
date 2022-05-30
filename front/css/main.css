@@ -341,7 +341,6 @@ template {
 body {
   max-width: 767px;
   margin: auto;
-  position: relative;
 }
 
 header {
@@ -355,12 +354,15 @@ header {
   justify-content: center;
 }
 
-#menu_icon {
+#menu_icon, #connected_user {
   font-size: 25px;
   flex: 1;
   display: flex;
-  justify-content: center;
   align-items: center;
+}
+
+#menu_icon {
+  justify-content: right;
 }
 
 #logo {
@@ -378,13 +380,43 @@ h2 {
   margin-bottom: 0px;
 }
 
-#access {
+#menu {
+  display: flex;
+  flex-direction: row;
+  width: 90%;
+  margin: auto;
+  display: grid;
+  grid-template-columns: 20% 20% 20% 20% 20%;
+}
+#menu #user_disconnected {
+  grid-column-start: 1;
+}
+#menu #user_profile {
+  grid-column-start: 3;
+}
+#menu #create {
+  grid-column-start: 5;
+}
+
+#login, #signup {
+  padding: 0;
+}
+
+#access, #social, #creation {
   display: flex;
   flex-direction: column;
   align-items: center;
 }
 
+.menu_contain {
+  flex: 1;
+  border: 3px solid black;
+  text-align: center;
+  border-radius: 10px;
+}
+
 .connection {
+  margin: 0;
   margin-top: 3%;
   display: flex;
   flex-direction: column;
@@ -393,14 +425,31 @@ h2 {
   width: 90%;
   border: 3px solid black;
   flex: 1;
+  padding-bottom: 5%;
 }
 
 .contenu {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.contenu h3 {
+  margin-bottom: 1%;
+  align-self: flex-start;
+}
+.contenu .buttons {
+  display: flex;
+}
+.contenu .comment_post, .contenu .update_post, .contenu .delete_post {
+  border-radius: 10px;
+}
+
+.contenu_creation {
   width: 90%;
   display: flex;
   flex-direction: column;
 }
-.contenu h3 {
+.contenu_creation h3 {
   margin-bottom: 1%;
   align-self: flex-start;
 }
@@ -415,6 +464,33 @@ button {
   margin-top: 5%;
   margin-bottom: 5%;
   display: flex;
+}
+
+#post_title input {
+  line-height: 2.15;
+  width: 100%;
+}
+
+#post_text input {
+  line-height: 20.15;
+  width: 100%;
+  margin-bottom: 5%;
+}
+
+.image_post img {
+  object-fit: cover;
+  max-width: 100%;
+}
+
+.title_post, .text_post {
+  padding: 1%;
+}
+
+.post_example {
+  border: 1px solid black;
+  width: 98%;
+  margin-top: 1%;
+  border-radius: 10px;
 }
 
 footer {

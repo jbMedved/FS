@@ -6,8 +6,6 @@ class User {
         this.password = password;
         this.pseudo = FirstName + " " + lastName;
     }
-    //on utilise l'utilitaire de cryptage du mot de passe : BCRYPT
-
 }
 
 // on exporte notre classe User

@@ -8,51 +8,148 @@
     <link rel="stylesheet" href="./css/main.css"/>
 </head>
 <body>
-    <header>
-        <div id="menu_icon">
-            <i class="fas fa-bars"></i>
-        </div>
-        <div id="entreprise">
-            <img id="logo" src="./sources/logo/icon-left-font-2.png" alt="logo entreprise"/>
-        </div>
-    </header>
-    <main>
-        <container id = "access">
-            <div id="login" class="connection">
-                <h2>se connecter</h2>
-                <div class="contenu">
-                    <h3>email :</h3>
-                    <input id="login_email" type="text" placeholder= "   email entreprise"/>
-                    <h3> mot de passe :</h3>
-                    <input id="login_password" type="text" />
-                    <button id="login-validation"> VALIDER</button>
+    <allThePage>
+        <header>
+            <div id="menu_icon" v-show ="isConnected" @click="changeMenuOn">
+                <i class="fas fa-bars"></i>
+            </div>
+            <div id="entreprise">
+                <img id="logo" src="./sources/logo/icon-left-font-2.png" alt="logo entreprise"/>
+            </div>
+
+        </header>
+        <main>
+            <div id="menu" v-show ="menuOn">
+                <div id="user_disconnected" class="menu_contain">
+                    <i class="fas fa-user-slash"></i>
+                    Déconnexion
+                </div>
+                <div id="user_profile" class="menu_contain">
+                    <i class="far fa-id-card"></i>
+                    profil
+                </div>
+                <div id="create" class="menu_contain">
+                    <i class="fas fa-plus"></i>
+                    Créer
                 </div>
             </div>
-            <div id="signin" class="connection">
-                    <h2>créer un compte</h2>
+            <container id = "access" v-show ="isNotConnected">
+                <div id="login" class="connection">
+                    <h2 @click="changeLoginOn">se connecter</h2>
+                    <div class="contenu" v-show ="loginOn">
+                        <h3>email : {{ login_email }}</h3>
+                        <input v-model="login_email" type="text" placeholder= "   email entreprise"/>
+                        <h3> mot de passe : {{ login_password }}</h3>
+                        <input v-model="login_password" type="text" />
+                        <button id="login_validation" @click="loginValidation"> VALIDER</button>
+                    </div>
+                </div>
+                <div id="signup" class="connection">
+                    <h2 @click="changeSignupOn">créer un compte</h2>
+                    <div class="contenu" v-show ="signupOn">
+                        <h3>email : {{ signup_email }}</h3>
+                        <input v-model="signup_email" type="text" placeholder= "   email entreprise"/>
+                        <div id="emailErrorMsg"></div>
+                        <h3>mot de passe : {{ signup_password }}</h3>
+                        <input v-model="signup_password" type="text" />
+                        <div id="passwordErrorMsg"></div>                
+                        <h3>nom : {{ signup_lastName }}</h3>
+                        <input v-model="signup_lastName" type="text" />                
+                        <h3>prenom : {{ signup_firstName }}</h3>
+                        <input v-model="signup_firstName" type="text" />
+                        <h3>mot de passe : {{ signup_password2 }}</h3>
+                        <input v-model="signup_password2" type="text" placeholder= "   repetez le mot de passe svp"/>
+                        <button id="signup_validation" @click="signupValidation"> VALIDER</button>
+                    </div>
+                </div>
+            </container>
+            <container id="social" v-show ="isConnected">
+                <div id="posts"  class="connection">
+                    <h2>posts</h2>
                     <div class="contenu">
-                    <h3>email :</h3>
-                    <input id="signin_email" type="text" placeholder= "   email entreprise"/>
-                    <h3>mot de passe :</h3>
-                    <input id="signin_password" type="text" />                
-                    <h3>nom :</h3>
-                    <input id="signin_lastName" type="text" />                
-                    <h3>prenom :</h3>
-                    <input id="signin_firstName" type="text" />
-                    <h3>mot de passe :</h3>
-                    <input id="signin_password2" type="text" placeholder= "   repetez le mot de passe svp"/>
-                    <button id="signin-validation"> VALIDER</button>
+                        <div class="post_example">
+                            <div class="title_post">
+                                <h3>titre: Lorem Ipsum </h3>
+                            </div>
+                            <div class="image_post">
+                                <img src="https://cdn.pixabay.com/photo/2020/03/24/20/53/aurora-borealis-4965488_960_720.jpg" 
+                                alt="title_post"/>                                
+                            </div>
+                            <div class="text_post">
+                                Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+                            </div>
+                            <div class="buttons">
+                                <button class="update_post" v-show ="isMine"> modifier </button>
+                                <button class="comment_post" > commenter </button>
+                                <button class="delete_post" v-show ="isMine"> supprimer </button>
+                            </div>
+                        </div>
+                        <div class="post_example">
+                            <div class="title_post">
+                                <h3>titre: Lorem Ipsum 2 </h3>
+                            </div>
+                            <div class="image_post">
+                                <img src="https://cdn.pixabay.com/photo/2020/03/24/20/53/aurora-borealis-4965488_960_720.jpg" 
+                                alt="title_post"/>                                
+                            </div>
+                            <div class="text_post">
+                                Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+                            </div>
+                            <div class="buttons">
+                                <button class="update_post" v-show ="isMine"> modifier </button>
+                                <button class="comment_post" > commenter </button>
+                                <button class="delete_post" v-show ="isMine"> supprimer </button>
+                            </div>
+                        </div>
+                        <!-- <div class="post_example">
+                            <div class="title_post">
+                                <h3>titre: {{ post.title }} </h3>
+                            </div>
+                            <div class="image_post">
+                                <img src="{{post.image_url}}" 
+                                alt="{{ post.title }}"/>                                
+                            </div>
+                            <div class="text_post">
+                                {{ post.text }}
+                            </div>
+                            <div class="buttons">
+                                <button class="update_post" v-show ="isMine"> modifier </button>
+                                <button class="comment_post" > commenter </button>
+                                <button class="delete_post" v-show ="isMine"> supprimer </button>
+                            </div>
+                        </div> -->
+                    </div>
                 </div>
-            </div>
-        </container>
-    </main>
-<footer>
-    <ul>
-        <li><a href="#">Reglement Intérieur</a></li>
-        <li><a href="mailto:contact@goupomania.fr">Contact</a></li>
-    </ul>
-    <i class="fas fa-copyright"> Copyright</i>
-</footer>
-    
+            </container>
+            <container id="creation">
+                <div id="post"  class="connection">
+                    <h2>creation</h2>
+                    <div class="contenu_creation">
+                        <div id="post_title">
+                            <h3>votre titre: {{ postTitle }}</h3>
+                            <input v-model="postTitle" type="text" placeholder= "   votre titre"/>
+                        </div>
+                        <div id="post_image">
+                            <h3>emplacement de l'image</h3>
+                            <input v-model="postUrl" type="url"/>
+                        </div>
+                        <div id="post_text">
+                            <h3>votre texte</h3>
+                            <input v-model="postText" type="text"/>
+                        </div>
+                    </div>
+                </div>
+            </container>
+        </main>
+        <footer>
+            <ul>
+                <li><a href="#">Reglement Intérieur</a></li>
+                <li><a href="mailto:contact@goupomania.fr">Contact</a></li>
+            </ul>
+            <i class="fas fa-copyright"> Copyright</i>
+        </footer>
+        <script src="https://cdn.jsdelivr.net/npm/vue@2.6.14"></script>
+        <script src="./js/app.js"></script>
+    </allThePage>
 </body>
 </html>
