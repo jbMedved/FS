@@ -39,7 +39,7 @@ exports.createPost = async (req, res) => {
                     console.log("erreur dans la requete d'affichage des posts");
                     res.json({ error });
                 } else {
-                    res.status(200).json({ results });
+                    res.status(201).json({ results });
                 }
             }
         );
@@ -60,6 +60,7 @@ exports.createPost = async (req, res) => {
 //         .then(posts => res.status(200).json(posts))
 //         .catch(error => res.status(400).json({ error }))
 // };
+
 exports.getAllPosts = async (req, res) => {
     try {
         const lesPosts = await mysqlConnection.query(
@@ -89,6 +90,7 @@ exports.getAllPosts = async (req, res) => {
 //         .then(post => res.status(200).json(post))
 //         .catch(error => res.status(404).json({ error }))
 // };
+
 exports.getOnePost = async (req, res) => {
     try {
         const id = req.params.id;
@@ -114,18 +116,19 @@ exports.getOnePost = async (req, res) => {
 // la modification  d'un post //
 ////////////////////////////////
 
-exports.modifyPost = async (req, res) => {
-    //     const postObject = req.file ?
-    //         {
-    //             ...JSON.parse(req.body.post),
-    //             imageUrl: `${req.protocol}://${req.get('host')}/medias/${req.file.filename}`
-    //         } : { ...req.body };
-    //     Post.updateOne({ _id: req.params.id }, { ...postObject, _id: req.params.id })
-    //         .then(() => res.status(200).json({ message: 'post modifié' }))
-    //         .catch(error => res.status(404).json({ error }))
-    // };
+//     const postObject = req.file ?
+//         {
+//             ...JSON.parse(req.body.post),
+//             imageUrl: `${req.protocol}://${req.get('host')}/medias/${req.file.filename}`
+//         } : { ...req.body };
+//     Post.updateOne({ _id: req.params.id }, { ...postObject, _id: req.params.id })
+//         .then(() => res.status(200).json({ message: 'post modifié' }))
+//         .catch(error => res.status(404).json({ error }))
+// };
 
-    // 1- on va chercher l'objet
+// 1- on va chercher l'objet
+
+exports.modifyPost = async (req, res) => {
     try {
         const id = req.params.id;
         const unPost = await mysqlConnection.query(
@@ -139,16 +142,60 @@ exports.modifyPost = async (req, res) => {
                     // 2- a t'on le droit de modifier ce post ?
                     if (userIdParamsUrl == results[0].id  /*||  ou results[0].id est admin*/) {
                         console.log('utilisateur autorisé');
+
+                        // 3- ya t'il un fichier joint?
+                        if (req.file) {
+                            // 4- identifier le fichier à supprimer
+                            const fileName = results[0].imageUrl.split("/medias")[1];
+                            // 5- supprimer le fichier remplacé
+                            fs.unlink(`media/${filename}`, (error) => {
+                                if (error) throw error;
+                            })
+                        }
+
+
+                        // 6- on met a jour notre post (avec et sans MAJ image)
+                        // const infoPost = JSON.parse(req.body.post);
+                        // console.log(infoPost);
+                        const postObject = req.file ? {
+                            ...JSON.parse(req.body.post),
+                            imageUrl: `${req.protocol}://${req.get('host')}/medias/${req.file.filename}`
+                        } : { ...req.body.post }
+
+                        // 7- on met a jour la BDD
+                        const { titre, contenu, imageUrl } = postObject;
+                        const sendToDatabase = req.file ?
+                            `UPDATE post 
+                        SET 
+                        titre = ?, 
+                        contenu = ?, 
+                        imageUrl = ? 
+                        WHERE id = ?`
+                            :
+                            `UPDATE post
+                        SET
+                        titre = ?, 
+                        contenu = ? 
+                        WHERE id = ?`
+                            ;
+                        const values = req.file ?
+                            [titre, contenu, imageUrl, id]
+                            :
+                            [titre, contenu, id]
+                            ;
+                        mysqlConnection.query(sendToDatabase, values, (error, results) => {
+                            if (error) {
+                                console.log("souci d'envoi de la maj")
+                                res.status(500).json({ error });
+                            } else {
+                                console.log("maj effectuée")
+                                res.status(201).json({ results });
+                            }
+                        })
+                    } else {
+                        console.log('modification non autorisée par cet utilisateur');
+                        res.status(403).json({ message: "vous n'etes pas autorisé a apporter des modifications" })
                     }
-                    // 3- ya t'il un fichier joint?
-                    if (req.file) {
-                        // 4- identifier le fichier à supprimer
-                        const fileName = results[0].imageUrl.split("/medias")[1];
-                    }
-                    // 5- supprimer le fichier remplacé
-                    // fs.unlink(`media/${filename}`, (error => {
-                    //     if (error) throw error;
-                    // }))
                 }
             }
         );
