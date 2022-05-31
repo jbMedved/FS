@@ -126,10 +126,10 @@ exports.getOnePost = async (req, res) => {
 //         .catch(error => res.status(404).json({ error }))
 // };
 
-// 1- on va chercher l'objet
 
 exports.modifyPost = async (req, res) => {
     try {
+        // 1- on va chercher l'objet
         const id = req.params.id;
         const unPost = await mysqlConnection.query(
             "SELECT * FROM post WHERE id= ? ", [id],
@@ -142,7 +142,6 @@ exports.modifyPost = async (req, res) => {
                     // 2- a t'on le droit de modifier ce post ?
                     if (userIdParamsUrl == results[0].id  /*||  ou results[0].id est admin*/) {
                         console.log('utilisateur autorisé');
-
                         // 3- ya t'il un fichier joint?
                         if (req.file) {
                             // 4- identifier le fichier à supprimer
@@ -152,8 +151,6 @@ exports.modifyPost = async (req, res) => {
                                 if (error) throw error;
                             })
                         }
-
-
                         // 6- on met a jour notre post (avec et sans MAJ image)
                         // const infoPost = JSON.parse(req.body.post);
                         // console.log(infoPost);
@@ -210,26 +207,78 @@ exports.modifyPost = async (req, res) => {
 // la suppression d'un post //
 //////////////////////////////
 
-exports.deletePost = (req, res, next) => {
-    Post.findOne({ _id: req.params.id })
-        .then(post => {
-            const filename = thing.imageUrl.split('/medias/')[1];
-            fs.unlink(`medias/${filename}`, () => {
-                Post.findOne({ _id: req.params.id })
-                    .then((post) => {
-                        if (!post) {
-                            return res.status(404).json({ error: new Error('post introuvable') })
-                        };
-                        if (post.userId !== req.auth.userId) {
-                            return res.status(401).json({ error: new Error('requete non autorisée') })
-                        }
-                        Post.deleteOne({ _id: req.params.id })
-                            .then(() => res.status(200).json({ message: 'post supprimé' }))
-                            .catch(error => res.status(404).json({ error }))
-                    })
-            })
-        })
-        .catch(error => res.status(404).json({ error }))
+//     Post.findOne({ _id: req.params.id })
+//         .then(post => {
+//             const filename = thing.imageUrl.split('/medias/')[1];
+//             fs.unlink(`medias/${filename}`, () => {
+//                 Post.findOne({ _id: req.params.id })
+//                     .then((post) => {
+//                         if (!post) {
+//                             return res.status(404).json({ error: new Error('post introuvable') })
+//                         };
+//                         if (post.userId !== req.auth.userId) {
+//                             return res.status(401).json({ error: new Error('requete non autorisée') })
+//                         }
+//                         Post.deleteOne({ _id: req.params.id })
+//                             .then(() => res.status(200).json({ message: 'post supprimé' }))
+//                             .catch(error => res.status(404).json({ error }))
+//                     })
+//             })
+//         })
+//         .catch(error => res.status(404).json({ error }))
+// };
 
-};
+exports.deletePost = async (req, res) => {
+    try {
+        const id = req.params.id;
+        // 1- on va chercher l'objet
 
+        const unPost = await mysqlConnection.query(
+        "SELECT * FROM post WHERE id= ? ", [id],
+            (error, results) => {
+                if (error) {
+                    console.log("erreur dans la requete d'affichage pour suppression du post");
+                    res.json({ error });
+                } else {
+                    // res.status(200).json({ results });
+                    if (results !=0) {
+                        console.log("post existant")
+                    } else {
+                        console.log('post inexistant');
+                        return res.status(404).json({error})
+                    }
+                // 2- a t'on le droit de modifier ce post ?
+                    if (userIdParamsUrl == results[0].id  /*||  ou results[0].id est admin*/) {
+                        console.log('utilisateur autorisé à supprimer');
+                            // 4- identifier le fichier à supprimer
+                            const fileName = results[0].imageUrl.split("/medias")[1];
+                            // 5- supprimer le fichier remplacé
+                            fs.unlink(`media/${filename}`, (error) => {
+                                if (error) throw error;
+                            })
+                            // 6- mettre a jour le post avant suppression
+                            const values = [id]
+                            // 7- suppression du post
+                            mysqlConnection.query(
+                            `DELETE FROM post WHERE id = ?`, values, (error, results) => {
+                            if (error) {
+                                console.log("souci d'envoi de la suppression")
+                                res.status(500).json({ error });
+                            } else {
+                                console.log("suppression effectuée")
+                                res.status(201).json({ results });
+                            }
+                        })
+                    } else {
+                        console.log('suppression non autorisée par cet utilisateur');
+                        res.status(403).json({ message: "vous n'etes pas autorisé a apporter des modifications" })
+                    }
+                }
+            }
+        )
+    }
+    catch (err) {
+        console.log('souci avec deletePost')
+        res.status(500).json({ error: err });
+    }
+}
