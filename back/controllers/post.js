@@ -9,6 +9,8 @@ const mysqlConnection = require('../database/mysql');
 // ici on a les fonctions CRUD avec un nom de fonction évident //
 /////////////////////////////////////////////////////////////////
 
+
+
 /////////////////////////
 // la création de post //
 /////////////////////////
@@ -25,10 +27,30 @@ const mysqlConnection = require('../database/mysql');
 // };
 
 exports.createPost = async (req, res) => {
-    const imageUrl = `${req.protocol}://${req.get('host')}/medias/${req.file.filename}`;
-    const postObject = json.parse(req.body.post);
+    // console.log("req")
+    // console.log(req)
+    console.log("req.body")
+    console.log(req.body)
+    console.log("req.body.post")
+    console.log(req.body.post)
+    const imageUrl = req.file ? `${req.protocol}://${req.get('host')}/medias/${req.file.filename}` : "";
+    console.log('1')
+    //const postObject = JSON.parse(req.body);
+    const postObject = req.body;
+
+    console.log("postObject")
+    console.log(postObject)
     const { userId, titre, contenu } = postObject;
+    console.log('3')
+    console.log("userId")
+    console.log(userId)
+    console.log("titre")
+    console.log(titre)
+    console.log("contenu")
+    console.log(contenu)
+
     const post = new Post(userId, titre, contenu, imageUrl);
+    console.log('4')
     const values = [userId, titre, contenu, imageUrl];
     try {
         const envoiPost = await mysqlConnection.query(
@@ -36,7 +58,7 @@ exports.createPost = async (req, res) => {
             VALUES (?)`, [values],
             (error, results) => {
                 if (error) {
-                    console.log("erreur dans la requete d'affichage des posts");
+                    console.log("erreur dans la requete de creation des posts");
                     res.json({ error });
                 } else {
                     res.status(201).json({ results });
@@ -64,7 +86,7 @@ exports.createPost = async (req, res) => {
 exports.getAllPosts = async (req, res) => {
     try {
         const lesPosts = await mysqlConnection.query(
-            "SELECT * FROM post WHERE ?",
+            "SELECT * FROM post ",
             (error, results) => {
                 if (error) {
                     console.log("erreur dans la requete d'affichage des posts");
@@ -234,41 +256,41 @@ exports.deletePost = async (req, res) => {
         // 1- on va chercher l'objet
 
         const unPost = await mysqlConnection.query(
-        "SELECT * FROM post WHERE id= ? ", [id],
+            "SELECT * FROM post WHERE id= ? ", [id],
             (error, results) => {
                 if (error) {
                     console.log("erreur dans la requete d'affichage pour suppression du post");
                     res.json({ error });
                 } else {
                     // res.status(200).json({ results });
-                    if (results !=0) {
+                    if (results != 0) {
                         console.log("post existant")
                     } else {
                         console.log('post inexistant');
-                        return res.status(404).json({error})
+                        return res.status(404).json({ error })
                     }
-                // 2- a t'on le droit de modifier ce post ?
+                    // 2- a t'on le droit de modifier ce post ?
                     if (userIdParamsUrl == results[0].id  /*||  ou results[0].id est admin*/) {
                         console.log('utilisateur autorisé à supprimer');
-                            // 4- identifier le fichier à supprimer
-                            const fileName = results[0].imageUrl.split("/medias")[1];
-                            // 5- supprimer le fichier remplacé
-                            fs.unlink(`media/${filename}`, (error) => {
-                                if (error) throw error;
-                            })
-                            // 6- mettre a jour le post avant suppression
-                            const values = [id]
-                            // 7- suppression du post
-                            mysqlConnection.query(
-                            `DELETE FROM post WHERE id = ?`, values, (error, results) => {
-                            if (error) {
-                                console.log("souci d'envoi de la suppression")
-                                res.status(500).json({ error });
-                            } else {
-                                console.log("suppression effectuée")
-                                res.status(201).json({ results });
-                            }
+                        // 4- identifier le fichier à supprimer
+                        const fileName = results[0].imageUrl.split("/medias")[1];
+                        // 5- supprimer le fichier remplacé
+                        fs.unlink(`media/${filename}`, (error) => {
+                            if (error) throw error;
                         })
+                        // 6- mettre a jour le post avant suppression
+                        const values = [id]
+                        // 7- suppression du post
+                        mysqlConnection.query(
+                            `DELETE FROM post WHERE id = ?`, values, (error, results) => {
+                                if (error) {
+                                    console.log("souci d'envoi de la suppression")
+                                    res.status(500).json({ error });
+                                } else {
+                                    console.log("suppression effectuée")
+                                    res.status(201).json({ results });
+                                }
+                            })
                     } else {
                         console.log('suppression non autorisée par cet utilisateur');
                         res.status(403).json({ message: "vous n'etes pas autorisé a apporter des modifications" })

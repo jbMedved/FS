@@ -1,5 +1,7 @@
 const passwordErrorMsg = document.getElementById('passwordErrorMsg');
 const emailErrorMsg = document.getElementById('emailErrorMsg');
+const buttons = document.getElementById(".posts");
+const postsContenu = document.getElementById("posts_contenu");
 
 //on veut  que l'adresse mail saisie soit l'adresse mail pro
 regexMail = /^[^@\s]+@[groupomania]+\.[fr]+$/g;
@@ -22,25 +24,71 @@ regexPassword = /^(?=.{8,}$)(?=(?:.*?[A-Z]))(?=.*?[a-z])(?=(?:.*?[0-9])).*$/g;
 //      - 8 caracteres`
 // } else {
 
-function initiales(pseudo) {
-    let a = pseudo.split(' '),
-        l = a.length,
-        i = 0,
-        n = "";
-    for (; i < l; ++i) {
-        n += a[i].charAt(0);
-    }
-    console.log(n);
-}
+// function initiales(pseudo) {
+//     let a = pseudo.split(' '),
+//         l = a.length,
+//         i = 0,
+//         n = "";
+//     for (; i < l; ++i) {
+//         n += a[i].charAt(0);
+//     }
+//     console.log(n);
+// }
+// function seePosts() {
+//     fetch("http://localhost:3000/api/post", {
+//         method: "GET",
+//         headers: {
+//             'Accept': 'application/json',
+//             'Content-type': 'application/json'
+//         },
+//     })
+//         .then(function (res) {
+//             if (res.ok) {
+//                 // console.log(res)
+//                 this.posts = res
+//                 return res.json();
 
+//             } else {
+//                 console.log('utilisateur ou mot de passe incorrect')
+//             }
+//         })
+//         .then((data) => {
+//             console.log(data)
+//             // postsContenu.innerHTML = `
+//             // <div class="post_example" v-for="post in posts">
+//             //     <div class="title_post">
+//             //         <h3>titre: {{ this.post.titre }} </h3>
+//             //         <h4> par: {{ this.pseudo }} </h4>
+//             //     </div>
+//             //     <div class="image_post">
+//             //         <img src="{{this.post.imageUrl}}" 
+//             //         alt="{{ this.post.title }}"/>                                
+//             //     </div>
+//             //     <div class="text_post">
+//             //         {{ this.post.text }}
+//             //     </div>
+//             //     <div class="buttons">
+//             //         <button class="update_post" v-show ="isMine"> modifier </button>
+//             //         <button class="comment_post" > commenter </button>
+//             //         <button class="delete_post" v-show ="isMine"> supprimer </button>
+//             //     </div>
+//             // </div>`
+
+//         })
+//         .catch(function (err) {
+//             console.error(err)
+//             alert("souci avec le serveur : connexion momentanément impossible")
+//         });
+
+// }
 new Vue({
     el: 'allThePage',
     data: {
-        menuOn: false,
+        menuOn: true,
         loginOn: true,
         signupOn: true,
         isConnected: true,
-        isNotConnected: true,
+        seeProfile: false,
         login_email: "",
         login_password: "",
         signup_email: "",
@@ -52,8 +100,16 @@ new Vue({
         postUrl: "",
         postText: "",
         isMine: true,
+        createMode: true,
+        nom: "",
+        prenom: "",
+        creationTitle: "",
+        creationFile: "",
+        creationText: "",
+        posts: ""
     },
     methods: {
+        // ici c'est pour afficher ou non le contenu des diiferentes parties
         changeMenuOn: function () {
             this.menuOn = !this.menuOn
         },
@@ -63,7 +119,43 @@ new Vue({
         changeSignupOn: function () {
             this.signupOn = !this.signupOn
         },
-        // pour la connexion
+        create: function () {
+            this.createMode = !this.createMode
+        },
+
+        /////////////////
+        // les boutons //
+        /////////////////
+
+        // le bouton "profil"
+        userProfile: function () {
+            this.seeProfile = !this.seeProfile
+            console.log(this.seeProfile)
+            let pseudo = localStorage.getItem("pseudo");
+            console.log(pseudo)
+            pseudo = JSON.parse(pseudo)
+            console.log(pseudo)
+            this.nom = pseudo.split(" ")[1]
+            console.log(this.nom);
+            this.prenom = pseudo.split(" ")[0]
+            console.log(this.prenom);
+        },
+        // le bouton "déconnexion"
+        disconnectUser: function () {
+            token = []
+            pseudo = []
+            localStorage.setItem("token", JSON.stringify(token));
+            localStorage.setItem("pseudo", JSON.stringify(pseudo));
+            this.isConnected = false;
+            this.menuOn = false;
+            this.createMode = false;
+            this.loginOn = false;
+            this.signupOn = false;
+        },
+
+        ///////////////////////
+        // pour la connexion //
+        ///////////////////////
         loginValidation: function () {
             // on récupere l'email et le mot de passe
             let loginToSend = {
@@ -82,19 +174,33 @@ new Vue({
                 .then(function (res) {
                     if (res.ok) {
                         console.log("utilisateur connecté");
-                        console.log(res);
                         return res.json();
+
                     } else {
                         console.log('utilisateur ou mot de passe incorrect')
                     }
                 })
+                .then((data) => {
+                    const token = data.token;
+                    console.log(data)
+                    const pseudo = data.pseudo;
+                    if (token != undefined && pseudo != undefined) {
+                        // localStorage.setItem("token", JSON.stringify(token));
+                        localStorage.setItem("token", token);
+                        localStorage.setItem("pseudo", JSON.stringify(pseudo));
+                        this.isConnected = true;
+                    }
+                })
                 .catch(function (err) {
                     console.error(err)
-                    alert("souci avec le serveur : réessayez ultérieurement")
+                    alert("souci avec le serveur : connexion momentanément impossible")
                 });
 
         },
-        // pour l'insciption
+
+        ///////////////////////
+        // pour l'insciption //
+        ///////////////////////
         signupValidation: function () {
             // le mot de passe et la confirmation correspondent?
             if (this.signup_password != this.signup_password2) {
@@ -130,9 +236,57 @@ new Vue({
                     })
                     .catch(function (err) {
                         console.error(err)
-                        alert("souci avec l'envoi : réessayez ultérieurement")
+                        alert("souci avec la création de compte : réessayez ultérieurement")
                     });
             }
         },
+
+
+        /////////////////////////
+        // la creation de post //
+        /////////////////////////
+        creationValidation: function () {
+            //on recupère l'id du créateur du post (celui qui est connecté)
+
+            // on récupere le titre, l'image s'il y en a une et le contenu du texte
+            let creationToSend = {
+                titre: this.creationTitle,
+                imageurl: this.creationFile,
+                contenu: this.creationText
+            };
+            let token = localStorage.getItem("token");
+            console.log(token);
+
+            // et on envoie le tout
+            fetch("http://localhost:3000/api/post", {
+                method: "POST",
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-type': 'application/json',
+                    Authorization: `Bearer ${token}`
+                },
+                body: JSON.stringify(creationToSend)
+
+            })
+                .then(function (res) {
+                    if (res.ok) {
+                        console.log("post créé")
+                        return res.json();
+                    }
+                })
+                .catch(function (err) {
+                    console.error(err)
+                    alert("souci avec l'envoi : réessayez ultérieurement")
+                });
+
+
+        }
+
+
+
+
+
+
     }
 })
+posts.addEventListener('load', seePosts());

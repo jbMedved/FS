@@ -4,10 +4,23 @@
 const multer = require('multer');
 
 const MIME_TYPES = {
+    // 'image/jpg': 'jpg',
+    // 'image/jpeg': 'jpeg',
+    // 'image/png': 'png',
+    // 'video/mp4': 'mp4',
     'image/jpg': 'jpg',
-    'image/jpeg': 'jpeg',
+    'image/jpeg': 'jpg',
     'image/png': 'png',
+    'image/webp': 'webp',
+    'image/gif': 'gif',
+    'video/x-msvideo': 'avi',
     'video/mp4': 'mp4',
+    'video/mpeg': 'mpeg',
+    'video/ogg': 'ogv',
+    'video/mp2t': 'ts',
+    'video/webm': 'webm',
+    'video/3gpp': '3gp',
+    'video/3gpp2': '3g2'
 }
 
 const storage = multer.diskStorage({

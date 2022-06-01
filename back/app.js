@@ -29,7 +29,7 @@ app.use(express.json());
 
 //pour tout ce qui passe par la racine api/post, 
 //utiliser la logique contenue dans routes/post.js
-app.use('/api/posts', postRoutes);
+app.use('/api/post', postRoutes);
 
 //pour tout ce qui passe par la racine api/auth, 
 //utiliser la logique contenue dans routes/user.js

@@ -87,14 +87,17 @@ exports.login = (req, res, next) => {
                         }
                         // si le mot de passe correspond
                         console.log('le pwd est bon');
+                        console.log(results[0]);
                         res.status(200).json({
                             userId: results[0].id,
                             token: jwt.sign(
                                 { userId: results[0].id },
-                                'M0nSup3rT0k3n',
+                                'SECUREKEY',
                                 { expiresIn: '12h' }
-                            )
+                            ),
+                            pseudo: results[0].pseudo
                         });
+
                     })
                     .catch(err => res.status(500).json({ error: `souci bcrypt: ${err}` }));
             }

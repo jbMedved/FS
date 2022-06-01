@@ -69,7 +69,7 @@ h2{
   padding: 0;
 }
 
-#access, #social, #creation{
+#access, #social, #creation, #profil{
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -125,24 +125,54 @@ input{
   border-radius: 10px;
   align-items: center;
 }
+textarea {
+  width: 100%;
+  height: 300px;
+}
 
+.profil{
+  margin-left: 20%;
+  margin-right: 20%;
+  input {
+    width: 100%;
+  }
+}
 button{
   margin: auto;
   margin-top: 5%;
   margin-bottom: 5%;
   display: flex;
 }
+#post {
+  &__title input{
+    line-height: 2.15;
+    width: 100%; 
+  }
+  &__text input{
+    line-height: 20.15;
+    width: 100%;
+    margin-bottom: 5%;
 
-#post_title input{
-  line-height: 2.15;
-  width: 100%;
+  }
+  &__image input{
+      width: 100%;
+      border-radius: 0;
+  }
 }
+// #post__title input{
+//   line-height: 2.15;
+//   width: 100%;
+// }
 
-#post_text input{
-  line-height: 20.15;
-  width: 100%;
-  margin-bottom: 5%;
-}
+// #post__text input{
+//   line-height: 20.15;
+//   width: 100%;
+//   margin-bottom: 5%;
+// }
+// #post__image input{
+//   width: 100%;
+//   border-radius: 0;
+// }
 
 .image_post{
   img{

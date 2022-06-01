@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Groupomania</title>
     <link rel="stylesheet" href="./css/main.css"/>
+    <link rel="shortcut icon" type="image/png" href="./sources/logo/icon.png"/>
 </head>
 <body>
     <allThePage>
@@ -19,28 +20,28 @@
 
         </header>
         <main>
-            <div id="menu" v-show ="menuOn">
-                <div id="user_disconnected" class="menu_contain">
+            <div id="menu" v-show ="menuOn" v-show ="isConnected" >
+                <div id="user_disconnected" class="menu_contain" @click="disconnectUser">
                     <i class="fas fa-user-slash"></i>
                     Déconnexion
                 </div>
-                <div id="user_profile" class="menu_contain">
+                <div id="user_profile" class="menu_contain" @click="userProfile">
                     <i class="far fa-id-card"></i>
                     profil
                 </div>
-                <div id="create" class="menu_contain">
+                <div id="create" class="menu_contain" @click="create">
                     <i class="fas fa-plus"></i>
                     Créer
                 </div>
             </div>
-            <container id = "access" v-show ="isNotConnected">
+            <container id = "access" v-show ="!isConnected">
                 <div id="login" class="connection">
                     <h2 @click="changeLoginOn">se connecter</h2>
                     <div class="contenu" v-show ="loginOn">
                         <h3>email : {{ login_email }}</h3>
                         <input v-model="login_email" type="text" placeholder= "   email entreprise"/>
                         <h3> mot de passe : {{ login_password }}</h3>
-                        <input v-model="login_password" type="text" />
+                        <input v-model="login_password" type="password" />
                         <button id="login_validation" @click="loginValidation"> VALIDER</button>
                     </div>
                 </div>
@@ -51,25 +52,64 @@
                         <input v-model="signup_email" type="text" placeholder= "   email entreprise"/>
                         <div id="emailErrorMsg"></div>
                         <h3>mot de passe : {{ signup_password }}</h3>
-                        <input v-model="signup_password" type="text" />
+                        <input v-model="signup_password" type="password" />
                         <div id="passwordErrorMsg"></div>                
                         <h3>nom : {{ signup_lastName }}</h3>
                         <input v-model="signup_lastName" type="text" />                
                         <h3>prenom : {{ signup_firstName }}</h3>
                         <input v-model="signup_firstName" type="text" />
                         <h3>mot de passe : {{ signup_password2 }}</h3>
-                        <input v-model="signup_password2" type="text" placeholder= "   repetez le mot de passe svp"/>
+                        <input v-model="signup_password2" type="password" placeholder= "   repetez le mot de passe svp"/>
                         <button id="signup_validation" @click="signupValidation"> VALIDER</button>
+                    </div>
+                </div>
+            </container>
+            <container id="profil" v-show="seeProfile">
+                <div id="post"  class="connection">
+                    <h2>Profil utilisateur</h2>
+                    <div class="contenu_creation">
+                        <div class="profil">
+                            <h3>votre nom : {{ nom }}</h3>
+                            <input  v-model="nom" type="text"/>
+                        </div>
+                        <div class="profil">
+                            <h3>votre prénom : {{ prenom }}</h3>
+                            <input  v-model="prenom" type="text"/>
+                        </div>
+                    </div>
+                </div>
+            </container>
+            <container id="creation" v-show ="createMode">
+                <div id="post"  class="connection">
+                    <h2>creation</h2>
+                    <div class="contenu_creation">
+                        <div id="post__title">
+                            <h3>votre titre: {{ creationTitle }}</h3>
+                            <input v-model="creationTitle" type="text" placeholder= "   votre titre"/>
+                        </div>
+                        <div id="post__image">
+                            <h3>emplacement de l'image</h3>
+                            <input v-model="creationFile" type="file" 
+                            accept="image/, video/"
+                            />
+                        </div>
+                        <div id="post__text">
+                            <h3>votre texte</h3>
+                            <textarea v-model="creationText">
+                            </textarea>
+                            <button id="creation_validation" @click="creationValidation"> VALIDER</button>
+                        </div>
                     </div>
                 </div>
             </container>
             <container id="social" v-show ="isConnected">
                 <div id="posts"  class="connection">
                     <h2>posts</h2>
-                    <div class="contenu">
-                        <div class="post_example">
+                    <div id="posts_contenu" class="contenu">
+                        <!-- <div class="post_example">
                             <div class="title_post">
                                 <h3>titre: Lorem Ipsum </h3>
+                                <h4> pseudo: martin matin</h4>
                             </div>
                             <div class="image_post">
                                 <img src="https://cdn.pixabay.com/photo/2020/03/24/20/53/aurora-borealis-4965488_960_720.jpg" 
@@ -87,6 +127,7 @@
                         <div class="post_example">
                             <div class="title_post">
                                 <h3>titre: Lorem Ipsum 2 </h3>
+                                <h4> pseudo: martin matin</h4>
                             </div>
                             <div class="image_post">
                                 <img src="https://cdn.pixabay.com/photo/2020/03/24/20/53/aurora-borealis-4965488_960_720.jpg" 
@@ -100,13 +141,14 @@
                                 <button class="comment_post" > commenter </button>
                                 <button class="delete_post" v-show ="isMine"> supprimer </button>
                             </div>
-                        </div>
-                        <!-- <div class="post_example">
+                        </div> -->
+                        <!-- <div class="post_example" v-for="post in posts">
                             <div class="title_post">
                                 <h3>titre: {{ post.title }} </h3>
+                                <h4> par: {{ pseudo }} </h4>
                             </div>
                             <div class="image_post">
-                                <img src="{{post.image_url}}" 
+                                <img src="{{post.imageUrl}}" 
                                 alt="{{ post.title }}"/>                                
                             </div>
                             <div class="text_post">
@@ -118,25 +160,6 @@
                                 <button class="delete_post" v-show ="isMine"> supprimer </button>
                             </div>
                         </div> -->
-                    </div>
-                </div>
-            </container>
-            <container id="creation">
-                <div id="post"  class="connection">
-                    <h2>creation</h2>
-                    <div class="contenu_creation">
-                        <div id="post_title">
-                            <h3>votre titre: {{ postTitle }}</h3>
-                            <input v-model="postTitle" type="text" placeholder= "   votre titre"/>
-                        </div>
-                        <div id="post_image">
-                            <h3>emplacement de l'image</h3>
-                            <input v-model="postUrl" type="url"/>
-                        </div>
-                        <div id="post_text">
-                            <h3>votre texte</h3>
-                            <input v-model="postText" type="text"/>
-                        </div>
                     </div>
                 </div>
             </container>

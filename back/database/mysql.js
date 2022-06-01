@@ -11,24 +11,58 @@ let dbConfig = {
 // ici on applique les parametres de connexion:
 const mysqlConnection = mysql.createConnection(dbConfig);
 
-// maintenant qu'on a les bons parametres, on se connecte
-mysqlConnection.connect((err) => {
-    if (err) {
-        //console.log('oups');
-        console.log(`erreur de connexion: ${err.stack}`)
-    } else {
-        //console.log('yes !!');
-        console.log('connexion effectuée à la base de données')
-        //console.log(mysqlConnection);
-    }
-})
+// // maintenant qu'on a les bons parametres, on se connecte
+// mysqlConnection.connect((err) => {
+//     if (err) {
+//         console.log('oups');
+//         console.log(`erreur de connexion: ${err.stack}`)
+//     } else {
+//         //console.log('yes !!');
+//         console.log('connexion effectuée à la base de données')
+//         //console.log(mysqlConnection);
+//     }
+// })
 
-// pour faire face aux deconnexions intempestives toutes les 5 minutes,
-// je relance la connexion toutes les 4.5 minutes
-// setInterval(mysqlConnection.connect, 270000);
-// setInterval(mysqlConnection, 270000);
-// ==> echec
+// // nouveau test de connexion mysql (31/05/22) -> trouvé sur youtube
+// mysqlConnection.connect();
+// mysqlConnection.on('connect', function () {
+//     console.log("connexion OK");
+//     setTimeout(function () {
+//         mysqlConnection.end;
+//     }, 1000);
+// })
+// mysqlConnection.on('end', function () {
+//     console.log("connexion finie");
+// })
 
+// nouveau test de connexion mysql (31/05/22) -> trouvé sur sudoall.com
+// let i = 0;
+// let mysqlConnection;
+// function handleDisconnect() {
+//     mysqlConnection = mysql.createConnection(dbConfig);
+//     mysqlConnection.connect(function (err) {              // The server is either down
+//         if (err) {                                     // or restarting (takes a while sometimes).
+//             console.log('error when connecting to db:', err);
+//             setTimeout(handleDisconnect, 2000); // We introduce a delay before attempting to reconnect,
+//         } else {
+//             console.log("connexion OK");
+//             i++;
+//             console.log(i);
+//         }                                  // to avoid a hot loop, and to allow our node script to
+//     });                                     // process asynchronous requests in the meantime.
+//     // If you're also serving http, display a 503 error.
+//     mysqlConnection.on('error', function (err) {
+//         console.log('db error', err);
+//         if (err.code === 'PROTOCOL_CONNECTION_LOST') { // Connection to the MySQL server is usually
+//             handleDisconnect();                         // lost due to either server restart, or a
+//         } else {                                      // connnection idle timeout (the wait_timeout
+//             throw err;                                 // server variable configures this)
+//         }
+//     });
+// }
 
-// et on exorte le tout
+// handleDisconnect();
+//  ===> ca ne resoud pas mes soucis de deconnexion mais ca reconnecte ensuite
+
+// et on exporte le tout
 module.exports = mysqlConnection;
