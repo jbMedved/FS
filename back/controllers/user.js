@@ -97,10 +97,39 @@ exports.login = (req, res, next) => {
                             ),
                             pseudo: results[0].pseudo
                         });
-
                     })
                     .catch(err => res.status(500).json({ error: `souci bcrypt: ${err}` }));
             }
         }
     )
 };
+
+//////////////////////////////////////////
+// test pour fetch l'id depuis le token //
+//////////////////////////////////////////
+exports.recupId = function (req, res) {
+    // on trouve l'id utilisateur depuis le token
+    if (req.headers && req.headers.authorization) {
+        // console.log('req.headers.authorization')
+        // console.log(req.headers.authorization)
+        const token = req.headers.authorization.split(' ')[1];
+        // console.log("token");
+        // console.log(token);
+        const decodedToken = jwt.verify(token, 'SECUREKEY');
+        // console.log("decodedToken");
+        // console.log(decodedToken);
+        const idFound = decodedToken.userId;
+        // console.log("idFound");
+        // console.log(idFound);
+        try {
+            // console.log("on a l'id lié au TOKEN")
+            res.status(200).json({ idFound });
+        } catch (e) {
+            console.log("souci pour retrouver l'id depuis token")
+            return res.status(401).send('unauthorized');
+        }
+        // on a l'id 
+    } else {
+        return res.send(500);
+    }
+}

@@ -10,6 +10,9 @@ router.post('/signup', userCtrl.signup);
 // ici c'est pour se connecter au compte utilisateur
 router.post('/login', userCtrl.login);
 
+// ici c'est pour recuperer l'id depuis le token
+router.get('/me', userCtrl.recupId);
+
 
 //et on exporte le tout
 module.exports = router;

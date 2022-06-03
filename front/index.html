@@ -37,31 +37,31 @@
             <container id = "access" v-show ="!isConnected">
                 <div id="login" class="connection">
                     <h2 @click="changeLoginOn">se connecter</h2>
-                    <div class="contenu" v-show ="loginOn">
-                        <h3>email : {{ login_email }}</h3>
-                        <input v-model="login_email" type="text" placeholder= "   email entreprise"/>
-                        <h3> mot de passe : {{ login_password }}</h3>
-                        <input v-model="login_password" type="password" />
+                    <form  class="contenu" v-show ="loginOn">
+                        <label for="loginmail"><h3>email : {{ login_email }}</h3></label>
+                        <input id="loginmail" v-model="login_email" type="text" placeholder= "   email entreprise"/>
+                        <label for="loginpwd"><h3> mot de passe : {{ login_password }}</h3></label>
+                        <input id="loginpwd" v-model="login_password" type="password" />
                         <button id="login_validation" @click="loginValidation"> VALIDER</button>
-                    </div>
+                    </form>
                 </div>
                 <div id="signup" class="connection">
                     <h2 @click="changeSignupOn">créer un compte</h2>
-                    <div class="contenu" v-show ="signupOn">
-                        <h3>email : {{ signup_email }}</h3>
-                        <input v-model="signup_email" type="text" placeholder= "   email entreprise"/>
+                    <form  id="form_signup" class="contenu" v-show ="signupOn">
+                        <label for="signupmail"><h3>email : {{ signup_email }}</h3></label>
+                        <input id="signupmail" v-model="signup_email" type="text" placeholder= "   email entreprise"/>
                         <div id="emailErrorMsg"></div>
-                        <h3>mot de passe : {{ signup_password }}</h3>
-                        <input v-model="signup_password" type="password" />
+                        <label for="signuppwd"><h3>mot de passe : {{ signup_password }}</h3></label>
+                        <input id="signuppwd" v-model="signup_password" type="password" />
                         <div id="passwordErrorMsg"></div>                
-                        <h3>nom : {{ signup_lastName }}</h3>
-                        <input v-model="signup_lastName" type="text" />                
-                        <h3>prenom : {{ signup_firstName }}</h3>
-                        <input v-model="signup_firstName" type="text" />
-                        <h3>mot de passe : {{ signup_password2 }}</h3>
-                        <input v-model="signup_password2" type="password" placeholder= "   repetez le mot de passe svp"/>
+                        <label for="signuplastname"><h3>nom : {{ signup_lastName }}</h3></label>
+                        <input id="signuplastname" v-model="signup_lastName" type="text" />                
+                        <label for="signupfirstname"><h3>prenom : {{ signup_firstName }}</h3></label>
+                        <input id="signupfirstname" v-model="signup_firstName" type="text" />
+                        <label for="signuppwd2"><h3>mot de passe : {{ signup_password2 }}</h3></label>
+                        <input id="signuppwd2" v-model="signup_password2" type="password" placeholder= "   repetez le mot de passe svp"/>
                         <button id="signup_validation" @click="signupValidation"> VALIDER</button>
-                    </div>
+                    </form>
                 </div>
             </container>
             <container id="profil" v-show="seeProfile">
@@ -82,30 +82,29 @@
             <container id="creation" v-show ="createMode">
                 <div id="post"  class="connection">
                     <h2>creation</h2>
-                    <div class="contenu_creation">
+                    <form id="creationForm" class="contenu_creation">
                         <div id="post__title">
-                            <h3>votre titre: {{ creationTitle }}</h3>
-                            <input v-model="creationTitle" type="text" placeholder= "   votre titre"/>
+                            <label for="creationTitle"><h3>votre titre: {{ creationTitle }}</h3></label>
+                            <input id="creationTitle" name ="creationTitle" v-model="creationTitle" type="text" placeholder= "   votre titre"/>
                         </div>
                         <div id="post__image">
-                            <h3>emplacement de l'image</h3>
-                            <input v-model="creationFile" type="file" 
-                            accept="image/, video/"
+                            <label for="creationfile"><h3>emplacement de l'image</h3></label>
+                            <input id="creationfile" name ="creationfile" v-model="creationfile" type="file"  accept="image/, video/"
                             />
                         </div>
                         <div id="post__text">
-                            <h3>votre texte</h3>
-                            <textarea v-model="creationText">
+                            <label for="creationText"><h3>votre texte</h3></label>
+                            <textarea id="creationText" name ="creationText" v-model="creationText">
                             </textarea>
-                            <button id="creation_validation" @click="creationValidation"> VALIDER</button>
+                            <input type="submit" value="VALIDER" id="creation_validation" @click="creationValidation"/>
                         </div>
-                    </div>
+                    </form>
                 </div>
             </container>
             <container id="social" v-show ="isConnected">
                 <div id="posts"  class="connection">
-                    <h2>posts</h2>
-                    <div id="posts_contenu" class="contenu">
+                    <h2 @click="seePosts">posts</h2>
+                    <div id="posts_contenu" class="contenu" v-show="seeAllPosts">
                         <!-- <div class="post_example">
                             <div class="title_post">
                                 <h3>titre: Lorem Ipsum </h3>
@@ -142,24 +141,24 @@
                                 <button class="delete_post" v-show ="isMine"> supprimer </button>
                             </div>
                         </div> -->
-                        <!-- <div class="post_example" v-for="post in posts">
+                        <div class="post_example" v-for="post in posts">
                             <div class="title_post">
-                                <h3>titre: {{ post.title }} </h3>
-                                <h4> par: {{ pseudo }} </h4>
+                                <h3>titre: {{ post.titre }} </h3>
+                                <h4> par: {{ post.pseudo }} </h4>
                             </div>
-                            <div class="image_post">
-                                <img src="{{post.imageUrl}}" 
-                                alt="{{ post.title }}"/>                                
+                            <div class="image_post" v-if='post.imageUrl !=""'>
+                                <img src='{{ post.imageUrl }}'  />
+                                alt="{{ post.titre }}"/>                                
                             </div>
                             <div class="text_post">
-                                {{ post.text }}
+                                {{ post.contenu }}
                             </div>
                             <div class="buttons">
-                                <button class="update_post" v-show ="isMine"> modifier </button>
+                                <button class="update_post" v-show ="post.id = this.whoamI"> modifier </button>
                                 <button class="comment_post" > commenter </button>
-                                <button class="delete_post" v-show ="isMine"> supprimer </button>
+                                <button class="delete_post" v-show ="post.id = this.whoamI"> supprimer </button>
                             </div>
-                        </div> -->
+                        </div>
                     </div>
                 </div>
             </container>

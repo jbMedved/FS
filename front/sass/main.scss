@@ -99,6 +99,7 @@ h2{
   display: flex;
   flex-direction: column;
   align-items: center;
+  padding-bottom: 5%;
   h3 {
     margin-bottom: 1%;
   align-self: flex-start;
@@ -159,20 +160,10 @@ button{
       border-radius: 0;
   }
 }
-// #post__title input{
-//   line-height: 2.15;
-//   width: 100%;
-// }
 
-// #post__text input{
-//   line-height: 20.15;
-//   width: 100%;
-//   margin-bottom: 5%;
-// }
-// #post__image input{
-//   width: 100%;
-//   border-radius: 0;
-// }
+#posts {
+  padding-bottom: unset;
+}
 
 .image_post{
   img{

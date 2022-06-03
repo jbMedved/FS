@@ -26,7 +26,7 @@ module.exports = (req, res, next) => {
         if (req.body.userId && req.body.userId !== userId) {
             throw 'ID utilisateur non valable';
         } else {
-            console.log('token décodé')
+            // console.log('token décodé')
             next();
         }
     } catch (error) {

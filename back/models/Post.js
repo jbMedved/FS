@@ -2,9 +2,9 @@
 class Post {
     // on crée le modele User
     constructor(titre, contenu, userId, imageUrl) {
-        this.userId = userId;
         this.titre = titre;
         this.contenu = contenu;
+        this.userId = userId;
         this.imageUrl = imageUrl;
     }
 }

@@ -11,29 +11,41 @@ let dbConfig = {
 // ici on applique les parametres de connexion:
 const mysqlConnection = mysql.createConnection(dbConfig);
 
-// // maintenant qu'on a les bons parametres, on se connecte
-// mysqlConnection.connect((err) => {
-//     if (err) {
-//         console.log('oups');
-//         console.log(`erreur de connexion: ${err.stack}`)
-//     } else {
-//         //console.log('yes !!');
-//         console.log('connexion effectuée à la base de données')
-//         //console.log(mysqlConnection);
-//     }
-// })
+// maintenant qu'on a les bons parametres, on se connecte
+mysqlConnection.connect((err) => {
+    if (err) {
+        console.log('oups');
+        console.log(`erreur de connexion: ${err.stack}`)
+    } else {
+        //console.log('yes !!');
+        console.log('connexion effectuée à la base de données')
+        //console.log(mysqlConnection);
+    };
+    setTimeout(function () {
+        console.log("connexion finie");
+        mysqlConnection.end;
+    }, 10000);
+})
 
-// // nouveau test de connexion mysql (31/05/22) -> trouvé sur youtube
+////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////
+
+// nouveau test de connexion mysql (31/05/22) -> trouvé sur youtube
 // mysqlConnection.connect();
-// mysqlConnection.on('connect', function () {
-//     console.log("connexion OK");
-//     setTimeout(function () {
-//         mysqlConnection.end;
-//     }, 1000);
-// })
-// mysqlConnection.on('end', function () {
-//     console.log("connexion finie");
-// })
+mysqlConnection.on('connect', function () {
+    console.log("connexion OK");
+    setTimeout(function () {
+        mysqlConnection.end;
+    }, 1000);
+})
+mysqlConnection.on('end', function () {
+    console.log("connexion finie");
+})
+
+////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////
 
 // nouveau test de connexion mysql (31/05/22) -> trouvé sur sudoall.com
 // let i = 0;

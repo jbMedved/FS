@@ -432,6 +432,7 @@ h2 {
   display: flex;
   flex-direction: column;
   align-items: center;
+  padding-bottom: 5%;
 }
 .contenu h3 {
   margin-bottom: 1%;
@@ -491,6 +492,10 @@ button {
 #post__image input {
   width: 100%;
   border-radius: 0;
+}
+
+#posts {
+  padding-bottom: unset;
 }
 
 .image_post img {

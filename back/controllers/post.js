@@ -29,28 +29,36 @@ const mysqlConnection = require('../database/mysql');
 exports.createPost = async (req, res) => {
     // console.log("req")
     // console.log(req)
-    console.log("req.body")
-    console.log(req.body)
-    console.log("req.body.post")
-    console.log(req.body.post)
-    const imageUrl = req.file ? `${req.protocol}://${req.get('host')}/medias/${req.file.filename}` : "";
-    console.log('1')
+    // console.log("req.body")
+    // console.log(req.body)
+    // console.log("req.body.post")
+    // console.log(req.body.post)
+    // console.log("req.auth")
+    // console.log(req.auth)
+    // console.log("req.auth.userId")
+    // console.log(req.auth.userId)
+    console.log("req.file")
+    console.log(req.file)
+    const imageUrl = req.file ? `${req.protocol}://${req.get('host')}/medias/${req.file.filename}` : "oui";
+    console.log("imageUrl")
+    console.log(imageUrl)
     //const postObject = JSON.parse(req.body);
     const postObject = req.body;
-
-    console.log("postObject")
-    console.log(postObject)
-    const { userId, titre, contenu } = postObject;
-    console.log('3')
+    // console.log("postObject")
+    // console.log(postObject)
+    const userId = req.auth.userId
+    const { titre, contenu } = postObject;
+    // console.log('3')
     console.log("userId")
     console.log(userId)
-    console.log("titre")
-    console.log(titre)
-    console.log("contenu")
-    console.log(contenu)
+    // console.log("titre")
+    // console.log(titre)
+    // console.log("contenu")
+    // console.log(contenu)
 
-    const post = new Post(userId, titre, contenu, imageUrl);
+    const post = new Post(titre, contenu, userId, imageUrl);
     console.log('4')
+    console.log(post)
     const values = [userId, titre, contenu, imageUrl];
     try {
         const envoiPost = await mysqlConnection.query(
@@ -86,12 +94,13 @@ exports.createPost = async (req, res) => {
 exports.getAllPosts = async (req, res) => {
     try {
         const lesPosts = await mysqlConnection.query(
-            "SELECT * FROM post ",
+            "SELECT post.titre, post.contenu, post.imageUrl, post.timestamp, user.id, user.pseudo FROM post JOIN user on post.userId=user.id order by post.timestamp DESC",
             (error, results) => {
                 if (error) {
                     console.log("erreur dans la requete d'affichage des posts");
                     res.json({ error });
                 } else {
+                    console.log(results);
                     res.status(200).json({ results });
                 }
             }
@@ -304,3 +313,4 @@ exports.deletePost = async (req, res) => {
         res.status(500).json({ error: err });
     }
 }
+
