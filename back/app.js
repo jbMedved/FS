@@ -35,7 +35,8 @@ app.use('/api/post', postRoutes);
 //utiliser la logique contenue dans routes/user.js
 app.use('/api/auth', userRoutes);
 
-app.use('/medias', express.static(path.join(__dirname, 'medias')));
+// app.use('/medias', express.static(path.join(__dirname, 'medias')));
+app.use('/images', express.static(path.join(__dirname, 'images')));
 
 // on exporte la constante app pour s'en servir dans d'autres fichiers
 module.exports = app;

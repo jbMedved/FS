@@ -31,15 +31,18 @@ exports.createPost = async (req, res) => {
     // console.log(req)
     // console.log("req.body")
     // console.log(req.body)
-    // console.log("req.body.post")
-    // console.log(req.body.post)
+    console.log("req.body.thing")
+    console.log(req.body.thing)
+    console.log("req.body.post")
+    console.log(req.body.post)
     // console.log("req.auth")
     // console.log(req.auth)
     // console.log("req.auth.userId")
     // console.log(req.auth.userId)
     console.log("req.file")
     console.log(req.file)
-    const imageUrl = req.file ? `${req.protocol}://${req.get('host')}/medias/${req.file.filename}` : "oui";
+    // const imageUrl = req.file ? `${req.protocol}://${req.get('host')}/medias/${req.file.filename}` : "";
+    const imageUrl = req.file ? `${req.protocol}://${req.get('host')}/images/${req.file.filename}` : "";
     console.log("imageUrl")
     console.log(imageUrl)
     //const postObject = JSON.parse(req.body);

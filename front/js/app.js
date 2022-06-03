@@ -307,6 +307,9 @@ new Vue({
             // en y incorporant le userId
             let formDataCreation = new FormData();
 
+            console.log("creationfile.files[0]")
+            console.log(creationfile.files[0])
+
             formDataCreation.append("creationfile", creationfile.files[0])
             formDataCreation.append("creationText", this.creationText)
             formDataCreation.append("creationTitle", this.creationTitle)
@@ -316,7 +319,8 @@ new Vue({
             let creationToSend = {
                 // userId: this.whoAmI,
                 titre: this.creationTitle,
-                imageurl: this.creationfile,
+                file: creationfile.files[0],
+                // imageurl: this.creationfile,
                 contenu: this.creationText
             };
 
@@ -368,11 +372,6 @@ new Vue({
                 .then(function (res) {
                     if (res.ok) {
                         console.log("id récupéré")
-                        // whoAmI= l'id que je dois trouver dans le res
-                        // console.log("res")
-                        // console.log(res)
-                        // console.log("res.body")
-                        // console.log(res.body)
                         return res.json();
                     }
                 })
