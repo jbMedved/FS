@@ -82,14 +82,19 @@
             <container id="creation" v-show ="createMode">
                 <div id="post"  class="connection">
                     <h2>creation</h2>
-                    <form id="creationForm" class="contenu_creation">
+                    <form id="creationForm" class="contenu_creation" enctype="multipart/form-data">
                         <div id="post__title">
                             <label for="creationTitle"><h3>votre titre: {{ creationTitle }}</h3></label>
                             <input id="creationTitle" name ="creationTitle" v-model="creationTitle" type="text" placeholder= "   votre titre"/>
                         </div>
                         <div id="post__image">
                             <label for="creationfile"><h3>emplacement de l'image</h3></label>
-                            <input id="creationfile" name ="creationfile" v-model="creationfile" type="file"  accept="image/, video/"
+                            <input id="creationfile" 
+                            method="post" 
+                            name ="creationfile" 
+ 
+                            type="file"  
+                            accept="image/, video/"
                             />
                         </div>
                         <div id="post__text">
@@ -105,59 +110,80 @@
                 <div id="posts"  class="connection">
                     <h2 @click="seePosts">posts</h2>
                     <div id="posts_contenu" class="contenu" v-show="seeAllPosts">
-                        <!-- <div class="post_example">
-                            <div class="title_post">
-                                <h3>titre: Lorem Ipsum </h3>
-                                <h4> pseudo: martin matin</h4>
-                            </div>
-                            <div class="image_post">
-                                <img src="https://cdn.pixabay.com/photo/2020/03/24/20/53/aurora-borealis-4965488_960_720.jpg" 
-                                alt="title_post"/>                                
-                            </div>
-                            <div class="text_post">
-                                Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-                            </div>
-                            <div class="buttons">
-                                <button class="update_post" v-show ="isMine"> modifier </button>
-                                <button class="comment_post" > commenter </button>
-                                <button class="delete_post" v-show ="isMine"> supprimer </button>
-                            </div>
-                        </div>
-                        <div class="post_example">
-                            <div class="title_post">
-                                <h3>titre: Lorem Ipsum 2 </h3>
-                                <h4> pseudo: martin matin</h4>
-                            </div>
-                            <div class="image_post">
-                                <img src="https://cdn.pixabay.com/photo/2020/03/24/20/53/aurora-borealis-4965488_960_720.jpg" 
-                                alt="title_post"/>                                
-                            </div>
-                            <div class="text_post">
-                                Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-                            </div>
-                            <div class="buttons">
-                                <button class="update_post" v-show ="isMine"> modifier </button>
-                                <button class="comment_post" > commenter </button>
-                                <button class="delete_post" v-show ="isMine"> supprimer </button>
-                            </div>
-                        </div> -->
-                        <div class="post_example" v-for="post in posts">
-                            <div class="title_post">
-                                <h3>titre: {{ post.titre }} </h3>
-                                <h4> par: {{ post.pseudo }} </h4>
-                            </div>
-                            <div class="image_post" v-if='post.imageUrl !=""'>
-                                <img src='{{ post.imageUrl }}'  />
-                                alt="{{ post.titre }}"/>                                
+                        <post class="post_example" v-for="post in posts">
+                                <div class="title_post">
+                                    <h3> {{ post.titre }} </h3>
+                                    <h4> par: {{ post.pseudo }} </h4>
+                                </div>
+                                <div class="image_post" v-if='post.imageUrl !=""'>
+                                    <img src='{{ post.imageUrl }}'  />
+                                    <alt={{ post.titre }}/>                                
+                                </div>
+                               <div class="text_post">
+                                    {{ post.contenu }}
+                                </div>
+                                <id class="post-id">
+                                {{ post.id }}
+                                </id>
+                                <div class="buttons" @click="coucou">                    
+                                    <button id="comment_post" > voir + </button>
+                                </div>
+                            </post>
+                    </div>
+                </div>
+            </container>
+            <container id="onePost" v-show ="isSelected">
+                <div id="posts"  class="connection">
+
+                    <h2>{{this.selectedTitle}}</h2>
+                    <h3>par {{this.selectedUser}}</h3>
+                    <div id="posts_contenu" class="contenu">
+                            <div class="image_post" v-if='this.selectedImageUrl !=""'>
+                                <img src="{{ this.selectedImageUrl }}"  />
+                                <alt={{ this.selectedTitle }}/>                                
                             </div>
                             <div class="text_post">
-                                {{ post.contenu }}
+                                {{ this.selectedContain }}
                             </div>
                             <div class="buttons">
-                                <button class="update_post" v-show ="post.id = this.whoamI"> modifier </button>
-                                <button class="comment_post" > commenter </button>
-                                <button class="delete_post" v-show ="post.id = this.whoamI"> supprimer </button>
+                                <button class="update_post" @click="modifier"> modifier </button>
+                                <button class="comment_post" @click="commenter"> commenter </button>
+                                <button class="delete_post" > supprimer </button>
                             </div>
+                            <form id="modificationForm" class="contenu_creation" enctype="multipart/form-data" v-show="goToModify">
+                                <div id="post__title">
+                                    <label for="modificationTitle"><h3> titre: {{ this.selectedTitle }}</h3></label>
+                                    <input id="modificationTitle" name ="modificationTitle" v-model="selectedTitle" type="text" placeholder= "   votre titre"/>
+                                </div>
+                                <div id="post__image">
+                                    <label for="modificationfile"><h3>emplacement de l'image</h3></label>
+                                    <input id="modificationfile" 
+                                    method="post" 
+                                    name ="modificationfile" 
+                                    type="file"  
+                                    accept="image/, video/"
+                                    />
+                                </div>
+                                <div id="post__text">
+                                    <label for="modificationText"><h3> texte</h3></label>
+                                    <textarea id="modificationText" name ="modificationText" v-model="selectedContain">
+                                        {{ this.selectedContain }}
+                                    </textarea>
+                                    
+                                </div>
+                                <input type="submit" value="VALIDER" id="modification_validation" @click="modificationValidation"/>
+                            </form>
+                            <div id="allComments">
+                                v-for="comment in comments"
+                                <!-- {{ comment.contenu}} -->
+                                Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book.
+                            </div>
+                            <form class="addComment" v-show="addComment">
+                                <textarea id="commentText" name ="commentText" v-model="commentText" placeholder="max : 200 caracteres">
+                                </textarea>
+                                <input type="submit" value="VALIDER" id="create_comment" @click="createComment"/>
+                            </form>
+                            
                         </div>
                     </div>
                 </div>

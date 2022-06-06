@@ -2,8 +2,8 @@
 class Commentaire {
     // on crée le modele User
     constructor(postId, userId, contenu) {
-        this.post_id = postId;
-        this.user_id = userId;
+        this.postId = postId;
+        this.userId = userId;
         this.contenu = contenu;
     }
 }

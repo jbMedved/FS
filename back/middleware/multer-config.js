@@ -1,70 +1,38 @@
-// // ici on met en place la possibilité de stocker des medias
-// // tels que des images ou des videos
-
-// const multer = require('multer');
-// console.log('multer : ON');
-// const MIME_TYPES = {
-//     // 'image/jpg': 'jpg',
-//     // 'image/jpeg': 'jpeg',
-//     // 'image/png': 'png',
-//     // 'video/mp4': 'mp4',
-//     'image/jpg': 'jpg',
-//     'image/jpeg': 'jpg',
-//     'image/png': 'png',
-//     'image/webp': 'webp',
-//     'image/gif': 'gif',
-//     // 'video/x-msvideo': 'avi',
-//     // 'video/mp4': 'mp4',
-//     // 'video/mpeg': 'mpeg',
-//     // 'video/ogg': 'ogv',
-//     // 'video/mp2t': 'ts',
-//     // 'video/webm': 'webm',
-//     // 'video/3gpp': '3gp',
-//     // 'video/3gpp2': '3g2'
-// }
-// const storage = multer.diskStorage({
-//     destination: (req, file, callback) => {
-//         callback(null, 'medias')
-//     },
-//     filename: (req, file, callback) => {
-//         const name = file.originalname.split(' ').join('_');
-//         const extension = MIME_TYPES[file.mimetype];
-//         callback(null, name + Date.now() + '.' + extension);
-//     }
-// });
-// console.log('multer : OFF')
-
-// module.exports = multer({ storage }).single('image');
-
-//////////////////////////////////////////////////////////////////////
+// ici on met en place la possibilité de stocker des medias
+// tels que des images ou des videos
 
 const multer = require('multer');
-
+console.log('multer : ON');
 const MIME_TYPES = {
     'image/jpg': 'jpg',
+    'image/jpeg': 'jpeg',
+    'image/png': 'png',
+    'video/mp4': 'mp4',
+    'image/jpg': 'jpg',
     'image/jpeg': 'jpg',
-    'image/png': 'png'
-};
-
+    'image/png': 'png',
+    'image/webp': 'webp',
+    'image/gif': 'gif',
+    'video/x-msvideo': 'avi',
+    'video/mp4': 'mp4',
+    'video/mpeg': 'mpeg',
+    'video/ogg': 'ogv',
+    'video/mp2t': 'ts',
+    'video/webm': 'webm',
+    'video/3gpp': '3gp',
+    'video/3gpp2': '3g2'
+}
 const storage = multer.diskStorage({
     destination: (req, file, callback) => {
-        console.log("req storage")
-        console.log(req)
-        console.log("file storage")
-        console.log(file)
-        callback(null, './images');
+        callback(null, 'medias')
     },
     filename: (req, file, callback) => {
-        console.log("req filename")
-        console.log(req)
-        console.log("file filename")
-        console.log(file)
         const name = file.originalname.split(' ').join('_');
         const extension = MIME_TYPES[file.mimetype];
         callback(null, name + Date.now() + '.' + extension);
     }
 });
+console.log('multer : OFF')
 
-module.exports = multer({ storage: storage }).single('image');
-
+module.exports = multer({ storage }).single('image');
 

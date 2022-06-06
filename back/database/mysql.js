@@ -1,14 +1,29 @@
 // ici on importe mysql
 const mysql = require('mysql');
+/////////////////////////////////////////////
+// on definit les parametres de connexion: //
+/////////////////////////////////////////////
 
-// on definit les parametres de connexion:
+// // clever cloud
+// let dbConfig = {
+//     host: 'bdujnlfj9e4qt3hbn3dl-mysql.services.clever-cloud.com',
+//     database: 'bdujnlfj9e4qt3hbn3dl',
+//     user: 'usbfddmz2brab5up',
+//     password: 'ZBX0j8vl9T575ScL5b8A',
+// };
+
+//mysqlworkbench
 let dbConfig = {
-    host: 'bdujnlfj9e4qt3hbn3dl-mysql.services.clever-cloud.com',
-    database: 'bdujnlfj9e4qt3hbn3dl',
-    user: 'usbfddmz2brab5up',
-    password: 'ZBX0j8vl9T575ScL5b8A',
+    host: 'localhost',
+    database: 'groupomania',
+    user: 'root',
+    password: 'Melina0701',
+    // port: "3306",
 };
-// ici on applique les parametres de connexion:
+
+//////////////////////////////////////////////////
+// ici on applique les parametres de connexion: //
+//////////////////////////////////////////////////
 const mysqlConnection = mysql.createConnection(dbConfig);
 
 // maintenant qu'on a les bons parametres, on se connecte
@@ -21,10 +36,10 @@ mysqlConnection.connect((err) => {
         console.log('connexion effectuée à la base de données')
         //console.log(mysqlConnection);
     };
-    setTimeout(function () {
-        console.log("connexion finie");
-        mysqlConnection.end;
-    }, 10000);
+    //     setTimeout(function () {
+    //         console.log("connexion finie");
+    //         mysqlConnection.end;
+    //     }, 10000);
 })
 
 ////////////////////////////////////////////////////////////////////////////
@@ -33,15 +48,15 @@ mysqlConnection.connect((err) => {
 
 // nouveau test de connexion mysql (31/05/22) -> trouvé sur youtube
 // mysqlConnection.connect();
-mysqlConnection.on('connect', function () {
-    console.log("connexion OK");
-    setTimeout(function () {
-        mysqlConnection.end;
-    }, 1000);
-})
-mysqlConnection.on('end', function () {
-    console.log("connexion finie");
-})
+// mysqlConnection.on('connect', function () {
+//     console.log("connexion OK");
+//     setTimeout(function () {
+//         mysqlConnection.end;
+//     }, 1000);
+// })
+// mysqlConnection.on('end', function () {
+//     console.log("connexion finie");
+// })
 
 ////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////
@@ -76,5 +91,33 @@ mysqlConnection.on('end', function () {
 // handleDisconnect();
 //  ===> ca ne resoud pas mes soucis de deconnexion mais ca reconnecte ensuite
 
+
 // et on exporte le tout
 module.exports = mysqlConnection;
+
+/////////////////////////////////////////////////////////////////////////
+// ici on va utiliser des parametres de connexion pour mysql Workbench //
+/////////////////////////////////////////////////////////////////////////
+
+// const conn = mysql.createConnection({
+//     conn.connect();
+//     conn.query(),
+//     conn.end()
+// })
+
+// const pool = mysql.createPool({
+//     connectionLimit: 10,
+//     host: localhost,
+//     user: root,
+//     password: Melina0701,
+//     database: groupomania
+// })
+
+// module.exports = pool;
+
+
+
+
+
+
+

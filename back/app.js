@@ -6,6 +6,7 @@ const app = express();
 
 // on importe le module de gestion des repertoires
 const path = require('path');
+// const pool = require('./database/mysql')
 
 // on importe notre router pour les posts
 const postRoutes = require('./routes/post')
@@ -27,6 +28,9 @@ app.use((req, res, next) => {
 // intercepte les requetes qui contiennent du JSON et l'envoie sur le req
 app.use(express.json());
 
+// app.use('/medias', express.static(path.join(__dirname, 'medias')));
+app.use('/images', express.static(path.join(__dirname, 'images')));
+
 //pour tout ce qui passe par la racine api/post, 
 //utiliser la logique contenue dans routes/post.js
 app.use('/api/post', postRoutes);
@@ -35,8 +39,7 @@ app.use('/api/post', postRoutes);
 //utiliser la logique contenue dans routes/user.js
 app.use('/api/auth', userRoutes);
 
-// app.use('/medias', express.static(path.join(__dirname, 'medias')));
-app.use('/images', express.static(path.join(__dirname, 'images')));
+
 
 // on exporte la constante app pour s'en servir dans d'autres fichiers
 module.exports = app;

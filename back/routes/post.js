@@ -1,15 +1,15 @@
 const express = require('express');
 const router = express.Router();
 
-// ici on importe les fonctions CRUD des posts stockées
-// dans controllers/post.js pour les intégrer aux routes
-const postCtrl = require('../controllers/post');
-
 // on importe la logique d'authentification pour permettre de sécuriser nos routes
 const auth = require('../middleware/auth');
 
 // on importe la logique de gestion de fichiers
 const multer = require('../middleware/multer-config');
+
+// ici on importe les fonctions CRUD des posts stockées
+// dans controllers/post.js pour les intégrer aux routes
+const postCtrl = require('../controllers/post');
 
 // ici c'est pour créer un post
 router.post('/', auth, multer, postCtrl.createPost);
@@ -25,6 +25,12 @@ router.put('/:id', auth, multer, postCtrl.modifyPost);
 
 // ici c'est pour supprimer un post
 router.delete('/:id', auth, postCtrl.deletePost);
+
+// ici c'est pour créer un commentaire
+router.post('/:id', auth, postCtrl.createComment);
+
+// ici c'est pour afficher TOUS les commentaires
+// router.get('/:id', auth, postCtrl.getAllComments);
 
 // on exporte le tout
 module.exports = router;
