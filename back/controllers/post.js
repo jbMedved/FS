@@ -1,5 +1,6 @@
 //ici on importe notre modele des posts pour la base de données
 const Post = require('../models/Post');
+const Commentaire = require('../models/Commentaire');
 
 // on importe l'outil de gestion des fichiers
 const fs = require('fs');
@@ -97,13 +98,13 @@ exports.createPost = async (req, res) => {
 exports.getAllPosts = async (req, res) => {
     try {
         const lesPosts = await mysqlConnection.query(
-            "SELECT post.titre, post.contenu, post.imageUrl, post.timestamp, user.id, user.pseudo FROM post JOIN user on post.userId=user.id order by post.timestamp DESC",
+            "SELECT post.id, post.titre, post.contenu, post.imageUrl, post.timestamp, post.userId, user.pseudo FROM post JOIN user on post.userId=user.id order by post.timestamp DESC",
             (error, results) => {
                 if (error) {
                     console.log("erreur dans la requete d'affichage des posts");
                     res.json({ error });
                 } else {
-                    console.log(results);
+                    // console.log(results);
                     res.status(200).json({ results });
                 }
             }
@@ -128,14 +129,40 @@ exports.getAllPosts = async (req, res) => {
 exports.getOnePost = async (req, res) => {
     try {
         const id = req.params.id;
+        // console.log(id)
         const unPost = await mysqlConnection.query(
-            "SELECT * FROM post WHERE id= ? ", [id],
+            "SELECT post.id, post.titre, post.contenu, post.imageUrl, post.timestamp, post.userId, user.pseudo FROM post JOIN user on post.userId=user.id where post.id = ? ", [id],
             (error, results) => {
                 if (error) {
                     console.log("erreur dans la requete d'affichage du post");
                     res.json({ error });
                 } else {
+                    // console.log("getOnePost")
+                    // console.log(results)
+                    // console.log("a")
                     res.status(200).json({ results });
+                    // console.log("ab")
+                    async (req, res) => {
+                        try {
+                            const lesComms = await mysqlConnection.query(
+                                "SELECT commentaire.id, commentaire.contenu, commentaire.userId, commentaire.postId, commentaire.timestamp, post.id FROM commentaire JOIN post on commentaire.postId=post.id order by post.timestamp DESC",
+                                (error, results) => {
+                                    if (error) {
+                                        console.log("erreur dans la requete d'affichage des posts");
+                                        res.json({ error });
+                                    } else {
+                                        console.log("getAllComments")
+                                        console.log(results);
+                                        res.status(200).json({ results });
+                                    }
+                                }
+                            );
+                        }
+                        catch (err) {
+                            console.log('souci avec getAllPosts')
+                            res.status(500).json({ error: err });
+                        }
+                    }
                 }
             }
         );
@@ -144,6 +171,7 @@ exports.getOnePost = async (req, res) => {
         console.log('souci avec getOnePost')
         res.status(500).json({ error: err });
     }
+
 }
 
 ////////////////////////////////
@@ -165,16 +193,30 @@ exports.modifyPost = async (req, res) => {
     try {
         // 1- on va chercher l'objet
         const id = req.params.id;
+        console.log("id")
+        console.log(id)
+        console.log("req.body")
+        console.log(req.body)
+        console.log("req.auth")
+        console.log(req.auth)
         const unPost = await mysqlConnection.query(
-            "SELECT * FROM post WHERE id= ? ", [id],
+            "SELECT post.id, post.titre, post.contenu, post.imageUrl, post.timestamp, post.userId, user.admin FROM post JOIN user on post.userId=user.id where post.id = ? ", [id],
             (error, results) => {
                 if (error) {
-                    console.log("erreur dans la requete d'affichage  pour update du post");
+                    console.log("erreur dans la requete d'affichage pour update du post");
                     res.json({ error });
                 } else {
+                    console.log("modif results")
+                    console.log(results)
                     res.status(200).json({ results });
                     // 2- a t'on le droit de modifier ce post ?
-                    if (userIdParamsUrl == results[0].id  /*||  ou results[0].id est admin*/) {
+                    console.log("results[0].userId")
+                    console.log(results[0].userId)
+                    console.log("req.auth.userId")
+                    console.log(req.auth.userId)
+                    console.log("results[0].admin")
+                    console.log(results[0].admin)
+                    if (req.auth.userId == results[0].userId || results[0].admin != null) {
                         console.log('utilisateur autorisé');
                         // 3- ya t'il un fichier joint?
                         if (req.file) {
@@ -185,7 +227,7 @@ exports.modifyPost = async (req, res) => {
                                 if (error) throw error;
                             })
                         }
-                        // 6- on met a jour notre post (avec et sans MAJ image)
+                        // 4- on met a jour notre post (avec et sans MAJ image)
                         // const infoPost = JSON.parse(req.body.post);
                         // console.log(infoPost);
                         const postObject = req.file ? {
@@ -317,3 +359,81 @@ exports.deletePost = async (req, res) => {
     }
 }
 
+exports.createComment = async (req, res) => {
+    // console.log("req")
+    // console.log(req)
+    console.log("req.body")
+    console.log(req.body)
+    const contenu = req.body.contenu
+    const postId = req.body.postId
+    // console.log("req.body.postId")
+    // console.log(req.body.postId)
+    // console.log("req.body.contenu")
+    // console.log(req.body.contenu)
+    // console.log("req.auth")
+    // console.log(req.auth)
+    // console.log("req.auth.userId")
+    // console.log(req.auth.userId)
+    // console.log("req.file")
+    // console.log(req.file)
+    // const commObject = JSON.parse(req.body);
+    // const postId = req.body;
+    // console.log("postId")
+    // console.log(postId)
+    const userId = req.auth.userId
+    // const { postId, contenu } = commObject;
+    // console.log('3')
+    console.log("userId")
+    console.log(userId)
+    // console.log("titre")
+    // console.log(titre)
+    // console.log("contenu")
+    // console.log(contenu)
+
+    const commentaire = new Commentaire(postId, userId, contenu);
+    // console.log('4 bis')
+    console.log(commentaire)
+    const values = [postId, userId, contenu];
+    try {
+        const envoiPost = await mysqlConnection.query(
+            `INSERT INTO commentaire(postId, userId, contenu)
+                VALUES (?)`, [values],
+            (error, results) => {
+                if (error) {
+                    console.log("erreur dans la requete de creation des commentaires");
+                    res.json({ error });
+                } else {
+                    console.log("c'est parti")
+                    // console.log(results)
+                    res.status(201).json({ results });
+                }
+            }
+        );
+    }
+    catch (err) {
+        console.log('souci avec createComment')
+        res.status(500).json({ error: err });
+    }
+}
+
+exports.getAllComments = async (req, res) => {
+    try {
+        const lesComms = await mysqlConnection.query(
+            "SELECT commentaire.id, commentaire.contenu, commentaire.userId, commentaire.postId, commentaire.timestamp, post.id FROM commentaire JOIN post on commentaire.postId=post.id order by post.timestamp DESC",
+            (error, results) => {
+                if (error) {
+                    console.log("erreur dans la requete d'affichage des posts");
+                    res.json({ error });
+                } else {
+                    console.log("getAllComments")
+                    console.log(results);
+                    res.status(200).json({ results });
+                }
+            }
+        );
+    }
+    catch (err) {
+        console.log('souci avec getAllPosts')
+        res.status(500).json({ error: err });
+    }
+}
