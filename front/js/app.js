@@ -737,7 +737,7 @@ new Vue({
                     Authorization: `Bearer ${token}`
                 },
             })
-        }
+        },
 
     },
 })
