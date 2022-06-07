@@ -28,8 +28,7 @@ app.use((req, res, next) => {
 // intercepte les requetes qui contiennent du JSON et l'envoie sur le req
 app.use(express.json());
 
-// app.use('/medias', express.static(path.join(__dirname, 'medias')));
-app.use('/images', express.static(path.join(__dirname, 'images')));
+app.use('/medias', express.static(path.join(__dirname, 'medias')));
 
 //pour tout ce qui passe par la racine api/post, 
 //utiliser la logique contenue dans routes/post.js

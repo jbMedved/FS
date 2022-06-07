@@ -116,15 +116,13 @@
                                     <h4> par: {{ post.pseudo }} </h4>
                                 </div>
                                 <div class="image_post" v-if='post.imageUrl !=""'>
-                                    <img src='{{ post.imageUrl }}'  alt={{ post.titre }}/>                               
+                                    <img :src='post.imageUrl'  :alt="post.titre"/>                               
                                 </div>
                                <div class="text_post">
                                     {{ post.contenu }}
                                 </div>
-                                <id class="post-id">
-                                {{ post.id }}
-                                </id>
-                                <div class="buttons" @click="coucou" id=":{{ post.id }}">                    
+                                <id class="post-id">{{ post.id }}</id>
+                                <div class="buttons" @click="coucou(post.id)" id=":{{ post.id }}">                    
                                     <button id="comment_post" > voir + </button>
                                 </div>
                             </post>
@@ -133,12 +131,13 @@
             </container>
             <container id="onePost" v-show ="isSelected">
                 <div id="posts"  class="connection">
-
-                    <h2>{{this.selectedTitle}}</h2>
-                    <h3>par {{this.selectedUser}}</h3>
+                    <div class="title_post">
+                        <h2>{{this.selectedTitle}}</h2>
+                        <h3>par {{this.selectedUser}}</h3>
+                    </div>
                     <div id="posts_contenu" class="contenu">
                             <div class="image_post" v-if='this.selectedImageUrl !=""'>
-                                <img src="{{ this.selectedImageUrl }}"  alt= {{ this.selectedTitle }}/>                              
+                                <img :src="this.selectedImageUrl"  :alt="this.selectedTitle"/>                              
                             </div>
                             <div class="text_post">
                                 {{ this.selectedContain }}
@@ -148,7 +147,7 @@
                                 <button class="comment_post" @click="commenter"> commenter </button>
                                 <button class="delete_post" @click="supprimer"> supprimer </button>
                             </div>
-                            <form id="modificationForm" class="contenu_creation" enctype="multipart/form-data" v-show="goToModify">
+                            <form action="javascript:void(0);"  id="modificationForm" class="contenu_creation" enctype="multipart/form-data" v-show="goToModify">
                                 <div id="post__title">
                                     <label for="modificationTitle"><h3> titre: {{ this.modifiedTitle }}</h3></label>
                                     <input id="modificationTitle" name ="modificationTitle"  v-model="modifiedTitle" type="text" placeholder= "   votre titre"/>

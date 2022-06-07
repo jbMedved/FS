@@ -32,10 +32,10 @@ exports.createPost = async (req, res) => {
     // console.log(req)
     // console.log("req.body")
     // console.log(req.body)
-    console.log("req.body.thing")
-    console.log(req.body.thing)
-    console.log("req.body.post")
-    console.log(req.body.post)
+    // console.log("req.body.thing")
+    // console.log(req.body.thing)
+    // console.log("req.body.post")
+    // console.log(req.body.post)
     // console.log("req.auth")
     // console.log(req.auth)
     // console.log("req.auth.userId")
@@ -65,18 +65,24 @@ exports.createPost = async (req, res) => {
     console.log(post)
     const values = [userId, titre, contenu, imageUrl];
     try {
-        const envoiPost = await mysqlConnection.query(
+        const envoiPost = mysqlConnection.query(
             `INSERT INTO post(userId, titre, contenu, imageUrl)
-            VALUES (?)`, [values],
-            (error, results) => {
-                if (error) {
-                    console.log("erreur dans la requete de creation des posts");
-                    res.json({ error });
-                } else {
-                    res.status(201).json({ results });
-                }
-            }
+            VALUES (?)`, [values]
+            // (error, results) => {
+            //     if (error) {
+            //         console.log("erreur dans la requete de creation des posts");
+            //         res.json({ error });
+            //     } else {
+            //         console.log('creation effectuée')
+            //         console.log(results)
+            //         res.status(201).json({ results: "pouet" });
+            //         // console.log("res")
+            //         // console.log(res)
+            //     }
+            // }
         );
+        res.status(201).json({ results: "pouet" })
+        // console.log(envoiPost);
     }
     catch (err) {
         console.log('souci avec createPost')
@@ -214,14 +220,7 @@ exports.modifyPost = async (req, res) => {
                 } else {
                     console.log("modif results")
                     console.log(results)
-                    res.status(200).json({ results });
-                    // 2- a t'on le droit de modifier ce post ?
-                    // console.log("results[0].userId")
-                    // console.log(results[0].userId)
-                    // console.log("req.auth.userId")
-                    // console.log(req.auth.userId)
-                    // console.log("results[0].admin")
-                    // console.log(results[0].admin)
+
                     if (req.auth.userId == results[0].userId || results[0].admin != null) {
                         console.log('utilisateur autorisé');
                         // 3- ya t'il un fichier joint?
@@ -229,7 +228,7 @@ exports.modifyPost = async (req, res) => {
                             // 4- identifier le fichier à supprimer
                             const fileName = results[0].imageUrl.split("/medias")[1];
                             // 5- supprimer le fichier remplacé
-                            fs.unlink(`media/${fileName}`, (error) => {
+                            fs.unlink(`medias/${fileName}`, (error) => {
                                 if (error) {
                                     console.log(error);
                                 }
@@ -239,9 +238,9 @@ exports.modifyPost = async (req, res) => {
                         // const infoPost = JSON.parse(req.body.post);
                         // console.log(infoPost);
                         const postObject = req.file ? {
-                            ...JSON.parse(req.body.post),
+                            // ...JSON.parse(req.body.post),
                             imageUrl: `${req.protocol}://${req.get('host')}/medias/${req.file.filename}`
-                        } : { ...req.body.post }
+                        } : { ...req.body }
                         console.log("postObject modif")
                         console.log(postObject)
                         // 7- on met a jour la BDD
@@ -263,22 +262,24 @@ exports.modifyPost = async (req, res) => {
                         console.log("reSendToDatabase")
                         console.log(reSendToDatabase)
                         const newValues = req.file ?
-                            [modifiedTitle, modifiedContain, imageUrl, id]
+                            [modifiedTitle, modifiedContain, postObject.imageUrl, id]
                             :
                             [modifiedTitle, modifiedContain, id]
                             ;
                         console.log("newValues")
                         console.log(newValues)
-                        mysqlConnection.query(reSendToDatabase, newValues, (error, results) => {
-                            if (error) {
-                                console.log("souci d'envoi de la maj")
-                                res.status(500).json({ error });
-                            } else {
-                                console.log("maj effectuée")
-                                // console.log(results)
-                                // res.status(201).json({ results });
-                            }
-                        })
+                        mysqlConnection.query(reSendToDatabase, newValues)
+                        // , (error, results) => {
+                        //     if (error) {
+                        //         console.log("souci d'envoi de la maj")
+                        //         res.status(500).json({ error });
+                        //     } else {
+                        //         console.log("maj effectuée")
+                        //         // console.log(results)
+                        res.status(201).end() // .json({ results: "youpi" });
+                        console.log('pouet')
+                        //     }
+                        // })
                     } else {
                         console.log('modification non autorisée par cet utilisateur');
                         res.status(403).json({ message: "vous n'etes pas autorisé a apporter des modifications" })
@@ -346,9 +347,11 @@ exports.deletePost = async (req, res) => {
                     if (req.auth.userId == results[0].userId || results[0].admin != null) {
                         console.log('utilisateur autorisé à supprimer');
                         // 4- identifier le fichier à supprimer
+                        console.log(results[0].imageUrl);
                         const fileName = results[0].imageUrl.split("/medias")[1];
+                        console.log(fileName)
                         // 5- supprimer le fichier remplacé
-                        fs.unlink(`media/${fileName}`, (error) => {
+                        fs.unlink(`medias/${fileName}`, (error) => {
                             if (error) {
                                 console.log("erreur lors de la suppression de fichier")
                                 console.log(error);

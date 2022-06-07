@@ -116,6 +116,7 @@ new Vue({
         selectedImageUrl: "",
         selectedContain: "",
         selectedUser: "",
+        selectedId: "",
         addComment: false,
         commentText: "",
         idSelectedFound: "",
@@ -325,41 +326,35 @@ new Vue({
             console.log("formDataCreation avant append")
             console.log(formDataCreation)
             formDataCreation.append("creationfile", creationfile.files[0])
-            formDataCreation.append("creationText", this.creationText)
-            formDataCreation.append("creationTitle", this.creationTitle)
+            formDataCreation.append("contenu", this.creationText)
+            formDataCreation.append("titre", this.creationTitle)
             console.log("formDataCreation apres append")
             console.log(formDataCreation)
 
-            let creationToSend = {
-                // userId: this.whoAmI,
-                titre: this.creationTitle,
-                file: creationfile.files[0],
-                // imageurl: this.creationfile,
-                contenu: this.creationText
-            };
-
-            console.log("creationToSend")
-            console.log(creationToSend)
             // et on envoie le tout
             fetch("http://localhost:3000/api/post", {
                 method: "POST",
                 headers: {
-                    'Accept': 'application/json',
-                    'Content-type': 'application/json',
+                    // 'Accept': 'application/json',
+                    // 'Content-type': 'application/json',
                     Authorization: `Bearer ${token}`
                 },
-                body: JSON.stringify(creationToSend)
-                // body: JSON.stringify(formDataCreation)
+                // body: JSON.stringify(creationToSend)
+                body: formDataCreation
             })
                 .then(function (res) {
+                    console.log("post envoyé 1")
                     if (res.ok) {
                         console.log("post envoyé")
                         return res.json();
                     }
                 })
+                .then(function (data) {
+                    console.log(data)
+                })
                 .catch(function (err) {
                     console.error(err)
-                    alert("souci avec l'envoi : réessayez ultérieurement")
+                    alert(err)
                 });
         },
 
@@ -443,27 +438,13 @@ new Vue({
         ///////////////////////////
         // l'affichage d'un post //
         ///////////////////////////
-        coucou: function () {
-            // console.log('coucou')
+        coucou: function (idPost) {
+            console.log(idPost)
             this.isSelected = true;
-            const buttonComment = document.getElementById("comment_post")
-            // console.log("isSelected")
-            // console.log(this.isSelected)
-            const parentButton = buttonComment.parentElement
-            const previousParentButton = parentButton.previousElementSibling
-            // console.log("previousParentButton")
-            // console.log(previousParentButton)
-            console.log(previousParentButton.innerHTML);
-            console.log(previousParentButton.innerHTML.split(' '));
-            this.idSelectedFound = previousParentButton.innerHTML.split(' ')[32]
-            console.log("this.idSelectedFound");
-            console.log(this.idSelectedFound);
-
-
             // on recupère l'id de l'utilisateur connecté
             let token = localStorage.getItem("token");
-            // console.log(`http://localhost:3000/api/post/${this.idSelectedFound}`)
-            selectedUrl = `http://localhost:3000/api/post/${this.idSelectedFound}`
+            console.log(`http://localhost:3000/api/post/${idPost}`)
+            selectedUrl = `http://localhost:3000/api/post/${idPost}`
             fetch(selectedUrl, {
                 method: "GET",
                 headers: {
@@ -486,10 +467,10 @@ new Vue({
                     // console.log('resultats du getOne')
                     // console.log(data)
                     const whatISee = data.results[0]
-                    // console.log(data.results[0])
+                    console.log(data.results[0])
                     this.seeAllPosts = false
                     this.selectedTitle = whatISee.titre
-
+                    this.selectedId = whatISee.id
                     this.selectedImageUrl = whatISee.imageUrl
 
                     this.selectedContain = whatISee.contenu
@@ -610,80 +591,50 @@ new Vue({
         modificationValidation: function (e) {
             e.preventDefault
             this.isSelected = true;
-            const buttonComment = document.getElementById("comment_post")
-            console.log("isSelected in modify")
-            console.log(this.isSelected)
-            const parentButton = buttonComment.parentElement
-            const previousParentButton = parentButton.previousElementSibling
-            console.log("previousParentButton in modify")
-            console.log(previousParentButton)
-            console.log(previousParentButton.innerHTML);
-            this.idSelectedFound = previousParentButton.innerHTML.split(' ')[32]
-            console.log("this.idSelectedFound in modify");
-            console.log(this.idSelectedFound);
 
             // on récupere le titre, l'image s'il y en a une et le contenu du texte
-            // en y incorporant le userId
-            // this.modifiedTitle = this.selectedTitle
-            // this.modifiedContain = this.selectedContain
             let formDataModification = new FormData();
+            formDataModification.append("creationfile", modificationfile.files[0])
+            formDataModification.append("contenu", this.modifiedContain)
+            formDataModification.append("titre", this.modifiedTitle)
 
-            console.log("creationfile.files[0]")
-            console.log(creationfile.files[0])
-
-            formDataModification.append("modificationfile", creationfile.files[0])
-            formDataModification.append("modificationText", this.modifiedContain)
-            formDataModification.append("modificationTitle", this.modifiedTitle)
-            console.log("formDataModification")
-            console.log(formDataModification)
-
-            let modificationToSend = {
-                // userId: this.whoAmI,
-                titre: this.modifiedTitle,
-                file: creationfile.files[0],
-                // imageurl: this.creationfile,
-                contenu: this.modifiedContain
-            };
-
-            console.log("modificationToSend")
-            console.log(modificationToSend)
             // et on envoie le tout
-            // on recupère l'id de l'utilisateur connecté
             let token = localStorage.getItem("token");
-            console.log(`http://localhost:3000/api/post/${this.idSelectedFound}in modify`)
-            selectedUrl = `http://localhost:3000/api/post/${this.idSelectedFound}`
+            console.log(`http://localhost:3000/api/post/${this.selectedId} in modify`)
+            selectedUrl = `http://localhost:3000/api/post/${this.selectedId}`
 
             fetch(selectedUrl, {
                 method: "PUT",
                 headers: {
-                    'Accept': 'application/json',
-                    'Content-type': 'application/json',
+                    // 'Accept': 'application/json',
+                    // 'Content-type': 'application/json',
                     Authorization: `Bearer ${token}`
                 },
-                body: JSON.stringify(modificationToSend)
-                // body: JSON.stringify(formDataCreation)
+                body: formDataModification
+
             })
                 .then(function (res) {
                     if (res.ok) {
-                        console.log(res)
+                        // console.log(res)
                         console.log("post modifié")
-                        return res.json();
+                        // return res.json();
                     }
                 })
-                .then(function (data) {
-                    console.log(data)
-                })
+                // .then(function (data) {
+                //     console.log(data)
+                // })
                 .catch(function (err) {
                     console.error(err)
-                    alert("souci avec la modification : réessayez ultérieurement")
+                    alert(err)
+                    // alert("souci avec la modification : réessayez ultérieurement")
                 });
         },
 
         /////////////////////////
         // suppression de post //
         /////////////////////////
-        supprimer: function (e) {
-            e.preventDefault();
+        supprimer: function () {
+
             console.log("supprimons")
 
             //on recupère l'id de celui qui veut supprimer le post
@@ -715,20 +666,7 @@ new Vue({
                     alert("souci avec l'envoi recupId : réessayez ultérieurement")
                 });
 
-            const buttonComment = document.getElementById("comment_post")
-            // console.log("isSelected")
-            // console.log(this.isSelected)
-            const parentButton = buttonComment.parentElement
-            const previousParentButton = parentButton.previousElementSibling
-            // console.log("previousParentButton")
-            // console.log(previousParentButton)
-            console.log(previousParentButton.innerHTML);
-            console.log(previousParentButton.innerHTML.split(' '));
-            this.idSelectedFound = previousParentButton.innerHTML.split(' ')[32]
-            console.log("this.idSelectedFound");
-            console.log(this.idSelectedFound);
-
-            selectedUrl = `http://localhost:3000/api/post/${this.idSelectedFound}`
+            selectedUrl = `http://localhost:3000/api/post/${this.selectedId}`
             fetch(selectedUrl, {
                 method: "DELETE",
                 headers: {
@@ -737,6 +675,13 @@ new Vue({
                     Authorization: `Bearer ${token}`
                 },
             })
+                .then(() => {
+                    this.goToModify = false;
+                    this.seeAllPosts = true
+                })
+                .catch(() => {
+                    console.log('souci')
+                })
         },
 
     },

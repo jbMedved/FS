@@ -187,8 +187,9 @@ button{
   }
 }
 
-.title_post, .text_post{
+.title_post, .text_post {
 padding: 1%;
+word-break: break-all;
 }
 .post_example {
   border: 1px solid black;

@@ -2,7 +2,7 @@
 // tels que des images ou des videos
 
 const multer = require('multer');
-console.log('multer : ON');
+// console.log('multer : ON');
 const MIME_TYPES = {
     'image/jpg': 'jpg',
     'image/jpeg': 'jpeg',
@@ -32,7 +32,7 @@ const storage = multer.diskStorage({
         callback(null, name + Date.now() + '.' + extension);
     }
 });
-console.log('multer : OFF')
+// console.log('multer : OFF')
 
-module.exports = multer({ storage }).single('image');
+module.exports = multer({ storage }).single('creationfile');
 
