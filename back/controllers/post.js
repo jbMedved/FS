@@ -154,7 +154,7 @@ exports.getOnePost = async (req, res) => {
                                 "SELECT commentaire.id, commentaire.contenu, commentaire.userId, commentaire.postId, commentaire.timestamp, post.id FROM commentaire JOIN post on commentaire.postId=post.id order by post.timestamp DESC",
                                 (error, results) => {
                                     if (error) {
-                                        console.log("erreur dans la requete d'affichage des posts");
+                                        console.log("erreur dans la requete d'affichage du post");
                                         res.json({ error });
                                     } else {
                                         console.log("getAllComments")
@@ -451,11 +451,15 @@ exports.createComment = async (req, res) => {
 
 exports.getAllComments = async (req, res) => {
     try {
+        const id = JSON.parse(req.params.id);
+        console.log(id)
+
         const lesComms = await mysqlConnection.query(
-            "SELECT commentaire.id, commentaire.contenu, commentaire.userId, commentaire.postId, commentaire.timestamp, post.id FROM commentaire JOIN post on commentaire.postId=post.id order by post.timestamp DESC",
+            "SELECT commentaire.contenu, commentaire.postId, commentaire.timestamp, post.id, user.pseudo FROM commentaire JOIN post on commentaire.postId=post.id JOIN user on commentaire.userId=user.id where post.id = ? order by commentaire.timestamp DESC", [id],
             (error, results) => {
                 if (error) {
-                    console.log("erreur dans la requete d'affichage des posts");
+                    console.log("erreur dans la requete d'affichage des commentaires");
+                    console.log((error));
                     res.json({ error });
                 } else {
                     console.log("getAllComments")

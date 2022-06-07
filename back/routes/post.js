@@ -30,7 +30,7 @@ router.delete('/:id', auth, postCtrl.deletePost);
 router.post('/:id', auth, postCtrl.createComment);
 
 // ici c'est pour afficher TOUS les commentaires
-// router.get('/:id', auth, postCtrl.getAllComments);
+router.get('/:id/comments', auth, postCtrl.getAllComments);
 
 // on exporte le tout
 module.exports = router;

@@ -50,10 +50,10 @@
                     <form  id="form_signup" class="contenu" v-show ="signupOn">
                         <label for="signupmail"><h3>email : {{ signup_email }}</h3></label>
                         <input id="signupmail" v-model="signup_email" type="text" placeholder= "   email entreprise"/>
-                        <div id="emailErrorMsg"></div>
+                        <div id="email_error_message"></div>
                         <label for="signuppwd"><h3>mot de passe : {{ signup_password }}</h3></label>
                         <input id="signuppwd" v-model="signup_password" type="password" />
-                        <div id="passwordErrorMsg"></div>                
+                        <div id="password_error_message"></div>                
                         <label for="signuplastname"><h3>nom : {{ signup_lastName }}</h3></label>
                         <input id="signuplastname" v-model="signup_lastName" type="text" />                
                         <label for="signupfirstname"><h3>prenom : {{ signup_firstName }}</h3></label>
@@ -170,10 +170,15 @@
                                 </div>
                                 <input type="submit" value="VALIDER" id="modification_validation" @click="modificationValidation"/>
                             </form>
-                            <div id="allComments">
-                                v-for="comment in comments"
-                                <!-- {{ comment.contenu}} -->
-                                Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book.
+                            <div id="allComments" v-for="comment in allComments">
+                                <div class="qui">
+                                    {{ comment.pseudo }}
+                                </div>
+                                <div class="quoi">
+                                    <!-- v-for="comment in comments" -->
+                                    {{ comment.contenu}}
+                                    <!-- Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. -->
+                                </div>
                             </div>
                             <form class="addComment" v-show="addComment">
                                 <textarea id="commentText" name ="commentText" v-model="commentText" placeholder="max : 200 caracteres">

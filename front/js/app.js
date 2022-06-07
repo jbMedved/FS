@@ -1,88 +1,49 @@
-const passwordErrorMsg = document.getElementById('passwordErrorMsg');
-const emailErrorMsg = document.getElementById('emailErrorMsg');
+const passwordErrorMsg = document.getElementById('password_error_message');
+const emailErrorMsg = document.getElementById('email_error_message');
+
 const buttons = document.getElementById(".posts");
 const postsContenu = document.getElementById("posts_contenu");
 const creationForm = document.getElementById("creationForm");
 const postMenu = document.getElementById("posts");
 
+const signupmailText = ""
+const signuppwdText = ""
+const signuplastnameText = ""
+const signupfirstnameText = ""
+const signuppwd2Text = ""
+
 //on veut  que l'adresse mail saisie soit l'adresse mail pro
 regexMail = /^[^@\s]+@[groupomania]+\.[fr]+$/g;
-
-// le mot de passe doit avoir au moins:
-//     - 1 Majuscule
-//     - 1 Minuscule
-//     - 1 chiffre
-//     - 8 caracteres
 regexPassword = /^(?=.{8,}$)(?=(?:.*?[A-Z]))(?=.*?[a-z])(?=(?:.*?[0-9])).*$/g;
-// const mail = req.body.email;
-// const motDePasse = req.body.password;
+
 // if (mail.match(regexMail) == null) {
-// emailErrorMsg.innerHTML = 'veuillez saisir votre email professionnel svp'
-// }else if (motDePasse.match(regexPassword) == null) {
-// passwordErrorMsg.innerHTML = `le mot de passe doit avoir au moins:
-//      - 1 Majuscule
-//      - 1 Minuscule
-//      - 1 chiffre
-//      - 8 caracteres`
-// } else {
+//     emailErrorMsg.innerHTML = 'veuillez saisir votre email professionnel svp'
+// } else if (motDePasse.match(regexPassword) == null) {
+//     passwordErrorMsg.innerHTML = `le mot de passe doit avoir au moins:
+//          - 1 Majuscule
+//          - 1 Minuscule
+//          - 1 chiffre
+//          - 8 caracteres`
+// } else { }
 
-// function initiales(pseudo) {
-//     let a = pseudo.split(' '),
-//         l = a.length,
-//         i = 0,
-//         n = "";
-//     for (; i < l; ++i) {
-//         n += a[i].charAt(0);
-//     }
-//     console.log(n);
-// }
-// function seePosts() {
-//     fetch("http://localhost:3000/api/post", {
-//         method: "GET",
-//         headers: {
-//             'Accept': 'application/json',
-//             'Content-type': 'application/json'
-//         },
-//     })
-//         .then(function (res) {
-//             if (res.ok) {
-//                 // console.log(res)
-//                 this.posts = res
-//                 return res.json();
 
-//             } else {
-//                 console.log('utilisateur ou mot de passe incorrect')
-//             }
-//         })
-//         .then((data) => {
-//             console.log(data)
-//             // postsContenu.innerHTML = `
-//             // <div class="post_example" v-for="post in posts">
-//             //     <div class="title_post">
-//             //         <h3>titre: {{ this.post.titre }} </h3>
-//             //         <h4> par: {{ this.pseudo }} </h4>
-//             //     </div>
-//             //     <div class="image_post">
-//             //         <img src="{{this.post.imageUrl}}" 
-//             //         alt="{{ this.post.title }}"/>                                
-//             //     </div>
-//             //     <div class="text_post">
-//             //         {{ this.post.text }}
-//             //     </div>
-//             //     <div class="buttons">
-//             //         <button class="update_post" v-show ="isMine"> modifier </button>
-//             //         <button class="comment_post" > commenter </button>
-//             //         <button class="delete_post" v-show ="isMine"> supprimer </button>
-//             //     </div>
-//             // </div>`
 
-//         })
-//         .catch(function (err) {
-//             console.error(err)
-//             alert("souci avec le serveur : connexion momentanément impossible")
-//         });
 
-// }
+// } else if (firstNameText.match(regexName) == null) {
+//     firstNameErrorMsg.innerHTML = "Champ non rempli / non valide"
+// } else if (lastNameText.match(regexName) == null) {
+//     lastNameErrorMsg.innerHTML = "Champ non rempli / non valide"
+// } else if (addressText.match(regexOther) == null) {
+//     addressErrorMsg.innerHTML = "Champ non rempli / non valide"
+// } else if (cityText.match(regexName) == null) {
+//     cityErrorMsg.innerHTML = "Champ non rempli / non valide"
+// } else if (emailText.match(regexMail) == null) {
+//     emailErrorMsg.innerHTML = "Champ non rempli / non valide"
+
+
+
+
+
 new Vue({
     el: 'allThePage',
     data: {
@@ -102,7 +63,7 @@ new Vue({
         postUrl: "",
         postText: "",
         isMine: "",
-        createMode: true,
+        createMode: false,
         nom: "",
         prenom: "",
         creationTitle: "",
@@ -123,7 +84,8 @@ new Vue({
         comments: "",
         goToModify: false,
         modifiedTitle: "",
-        modifiedContain: ""
+        modifiedContain: "",
+        allComments: "",
     },
     methods: {
         // ici c'est pour afficher ou non le contenu des diiferentes parties
@@ -232,12 +194,34 @@ new Vue({
         ///////////////////////
         // pour l'insciption //
         ///////////////////////
-        signupValidation: function () {
+        signupValidation: function (e) {
+            e.preventDefault()
+            const signupmail = document.getElementById("signupmail")
+            signupmail.addEventListener('input', (m) => { signupmailText = m.target.value })
+            const signuppwd = document.getElementById("signuppwd")
+            signuppwd.addEventListener('input', (pwd) => { signuppwdText = pwd.target.value })
+            const signuplastname = document.getElementById("signuplastname")
+            signuplastname.addEventListener('input', (n) => { signuplastnameText = n.target.value })
+            const signupfirstname = document.getElementById("signupfirstname")
+            signupfirstname.addEventListener('input', (f) => { signupfirstnameText = f.target.value })
+            const signuppwd2 = document.getElementById("signuppwd2")
+            signuppwd2.addEventListener('input', (pwd2) => { signuppwd2Text = pwd2.target.value })
             // le mot de passe et la confirmation correspondent?
             if (this.signup_password != this.signup_password2) {
-                // console.log(signup_password);
-                // console.log(signup_password2)
-                alert("mots de passe différents")
+            } else if (this.signup_password.match(regexMail) == null) {
+                passwordErrorMsg.innerHTML = "mots de passe différents"
+                emailErrorMsg.innerHTML = 'veuillez saisir votre email professionnel svp'
+                console.log("erreur 1")
+                console.log(m.target.value)
+            } else if (signup_password.match(regexPassword) == null) {
+                passwordErrorMsg.innerHTML = `le mot de passe doit avoir au moins:
+                     - 1 Majuscule
+                     - 1 Minuscule
+                     - 1 chiffre
+                     - 8 caracteres`
+                console.log("erreur 2")
+            } else if (!signuplastnameText || !signupfirstnameText) {
+                console.log("erreur 3")
             } else {
                 let sendEmail = this.signup_email;
                 let sensPassword = this.signup_password;
@@ -445,6 +429,7 @@ new Vue({
             let token = localStorage.getItem("token");
             console.log(`http://localhost:3000/api/post/${idPost}`)
             selectedUrl = `http://localhost:3000/api/post/${idPost}`
+            // on envoie la requete GET
             fetch(selectedUrl, {
                 method: "GET",
                 headers: {
@@ -468,13 +453,13 @@ new Vue({
                     // console.log(data)
                     const whatISee = data.results[0]
                     console.log(data.results[0])
+                    console.log("data.results")
+                    console.log(data.results)
                     this.seeAllPosts = false
                     this.selectedTitle = whatISee.titre
                     this.selectedId = whatISee.id
                     this.selectedImageUrl = whatISee.imageUrl
-
                     this.selectedContain = whatISee.contenu
-
                     this.selectedUser = whatISee.pseudo
 
 
@@ -486,7 +471,41 @@ new Vue({
                     alert("souci avec le serveur : connexion momentanément impossible")
                 });
 
+            // on recupere les commentaires
+            selectedUrl2 = `http://localhost:3000/api/post/${idPost}/comments`
+            // on envoie la requete GET
+            fetch(selectedUrl2, {
+                method: "GET",
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-type': 'application/json',
+                    Authorization: `Bearer ${token}`
+                },
+            })
+                .then(function (res) {
+                    if (res.ok) {
+                        // console.log(res)
+                        return res.json();
+                    } else {
+                        console.log('utilisateur ou mot de passe incorrect')
+                    }
+                })
+                .then((data) => {
+                    // console.log('resultats du getOne')
+                    // console.log(data)
+                    this.allComments = data.results
+                    console.log(data.results[0])
+                    console.log("data.results")
+                    console.log(data.results)
 
+
+                    console.log('whoAmI')
+                    console.log(this.whoAmI)
+                })
+                .catch(function (err) {
+                    console.error(err)
+                    alert("souci avec le serveur : connexion momentanément impossible")
+                });
         },
 
         ///////////////////////
@@ -533,31 +552,22 @@ new Vue({
             // on récupere le titre, l'image s'il y en a une et le contenu du texte
             // en y incorporant le userId
             let formDataCommentCreation = new FormData();
+            console.log("this.selectedId");
+            console.log(this.selectedId);
+            console.log("this.commentText")
+            console.log(this.commentText)
 
+            formDataCommentCreation.append("postId", this.selectedId)
+            formDataCommentCreation.append("contenu", this.commentText)
+            const datasent = {
+                "postId": this.selectedId,
+                "contenu": this.commentText
+            }
 
-
-            formDataCommentCreation.append("postId", this.postId)
-            formDataCommentCreation.append("creationTitle", this.creationTitle)
-
-            console.log(formDataCommentCreation)
-            console.log(this.idSelectedFound);
-            const idToSend = this.idSelectedFound
-            console.log("idToSend")
-            console.log(idToSend)
-            let commentToSend = {
-                // userId: this.whoAmI,
-                postId: idToSend.split('/')[0],
-                contenu: this.commentText
-            };
-            console.log("commentToSend")
-            console.log(commentToSend)
-
-
-            const sendToUrl = `http://localhost:3000/api/post/${idToSend}`
+            const sendToUrl = `http://localhost:3000/api/post/${this.selectedId}`
             console.log("sendToUrl")
             console.log(sendToUrl)
-            console.log("commentToSend")
-            console.log(commentToSend)
+
             // et on envoie le tout
             fetch(sendToUrl, {
                 method: "POST",
@@ -566,12 +576,12 @@ new Vue({
                     'Content-type': 'application/json',
                     Authorization: `Bearer ${token}`
                 },
-                body: JSON.stringify(commentToSend)
-                // body: JSON.stringify(formDataCreation)
+                body: JSON.stringify(datasent)
+                // formDataCommentCreation
             })
                 .then(function (res) {
                     if (res.ok) {
-                        console.log("post envoyé")
+                        console.log("commentaire envoyé")
                         return res.json();
                     }
                 })
