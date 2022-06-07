@@ -275,7 +275,8 @@ exports.modifyPost = async (req, res) => {
                                 res.status(500).json({ error });
                             } else {
                                 console.log("maj effectuée")
-                                res.status(201).json({ results });
+                                // console.log(results)
+                                // res.status(201).json({ results });
                             }
                         })
                     } else {
@@ -380,6 +381,10 @@ exports.deletePost = async (req, res) => {
     }
 }
 
+//////////////////////////////////
+// la creation d'un commentaire //
+//////////////////////////////////
+
 exports.createComment = async (req, res) => {
     // console.log("req")
     // console.log(req)
@@ -436,6 +441,10 @@ exports.createComment = async (req, res) => {
         res.status(500).json({ error: err });
     }
 }
+
+//////////////////////////////////
+// l'affichage des commentaires //
+//////////////////////////////////
 
 exports.getAllComments = async (req, res) => {
     try {
