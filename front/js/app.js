@@ -121,6 +121,8 @@ new Vue({
         idSelectedFound: "",
         comments: "",
         goToModify: false,
+        modifiedTitle: "",
+        modifiedContain: ""
     },
     methods: {
         // ici c'est pour afficher ou non le contenu des diiferentes parties
@@ -320,11 +322,12 @@ new Vue({
 
             console.log("creationfile.files[0]")
             console.log(creationfile.files[0])
-
+            console.log("formDataCreation avant append")
+            console.log(formDataCreation)
             formDataCreation.append("creationfile", creationfile.files[0])
             formDataCreation.append("creationText", this.creationText)
             formDataCreation.append("creationTitle", this.creationTitle)
-
+            console.log("formDataCreation apres append")
             console.log(formDataCreation)
 
             let creationToSend = {
@@ -398,6 +401,7 @@ new Vue({
                     console.error(err)
                     alert("souci avec l'envoi recupId : réessayez ultérieurement")
                 });
+
             fetch("http://localhost:3000/api/post", {
                 method: "GET",
                 headers: {
@@ -423,8 +427,8 @@ new Vue({
                     this.posts = data.results
                     // console.log("this.whoAmI")
                     // console.log(this.whoAmI)
-                    // console.log("this.posts")
-                    // console.log(this.posts)
+                    console.log("this.posts")
+                    console.log(this.posts)
                     // console.log('whoAmI')
                     // console.log(this.whoAmI)
 
@@ -449,10 +453,11 @@ new Vue({
             const previousParentButton = parentButton.previousElementSibling
             // console.log("previousParentButton")
             // console.log(previousParentButton)
-            // console.log(previousParentButton.innerHTML);
+            console.log(previousParentButton.innerHTML);
+            console.log(previousParentButton.innerHTML.split(' '));
             this.idSelectedFound = previousParentButton.innerHTML.split(' ')[32]
-            // console.log("this.idSelectedFound");
-            // console.log(this.idSelectedFound);
+            console.log("this.idSelectedFound");
+            console.log(this.idSelectedFound);
 
 
             // on recupère l'id de l'utilisateur connecté
@@ -602,7 +607,8 @@ new Vue({
             console.log("modifions")
             this.goToModify = !this.goToModify
         },
-        modificationValidation: function () {
+        modificationValidation: function (e) {
+            e.preventDefault
             this.isSelected = true;
             const buttonComment = document.getElementById("comment_post")
             console.log("isSelected in modify")
@@ -618,23 +624,25 @@ new Vue({
 
             // on récupere le titre, l'image s'il y en a une et le contenu du texte
             // en y incorporant le userId
+            // this.modifiedTitle = this.selectedTitle
+            // this.modifiedContain = this.selectedContain
             let formDataModification = new FormData();
 
             console.log("creationfile.files[0]")
             console.log(creationfile.files[0])
 
             formDataModification.append("modificationfile", creationfile.files[0])
-            formDataModification.append("modificationText", this.selectedContain)
-            formDataModification.append("modificationTitle", this.selectedTitle)
+            formDataModification.append("modificationText", this.modifiedContain)
+            formDataModification.append("modificationTitle", this.modifiedTitle)
             console.log("formDataModification")
             console.log(formDataModification)
 
             let modificationToSend = {
                 // userId: this.whoAmI,
-                titre: this.selectedTitle,
+                titre: this.modifiedTitle,
                 file: creationfile.files[0],
                 // imageurl: this.creationfile,
-                contenu: this.selectedContain
+                contenu: this.modifiedContain
             };
 
             console.log("modificationToSend")
@@ -662,11 +670,75 @@ new Vue({
                         return res.json();
                     }
                 })
+                .then(function (data) {
+                    console.log(data)
+                })
                 .catch(function (err) {
                     console.error(err)
                     alert("souci avec la modification : réessayez ultérieurement")
                 });
+        },
+
+        /////////////////////////
+        // suppression de post //
+        /////////////////////////
+        supprimer: function (e) {
+            e.preventDefault();
+            console.log("supprimons")
+
+            //on recupère l'id de celui qui veut supprimer le post
+            let token = localStorage.getItem("token");
+            fetch("http://localhost:3000/api/auth/me", {
+                method: "GET",
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-type': 'application/json',
+                    Authorization: `Bearer ${token}`
+                },
+            })
+                .then(function (res) {
+                    if (res.ok) {
+                        console.log("id récupéré pour affichage post")
+                        return res.json();
+                    }
+                })
+                .then((id) => {
+                    // console.log("id")
+                    // console.log(id)
+                    this.whoAmI = id.idFound;
+                    // console.log("qui suis-je ?")
+                    // console.log(this.whoAmI)
+                })
+
+                .catch(function (err) {
+                    console.error(err)
+                    alert("souci avec l'envoi recupId : réessayez ultérieurement")
+                });
+
+            const buttonComment = document.getElementById("comment_post")
+            // console.log("isSelected")
+            // console.log(this.isSelected)
+            const parentButton = buttonComment.parentElement
+            const previousParentButton = parentButton.previousElementSibling
+            // console.log("previousParentButton")
+            // console.log(previousParentButton)
+            console.log(previousParentButton.innerHTML);
+            console.log(previousParentButton.innerHTML.split(' '));
+            this.idSelectedFound = previousParentButton.innerHTML.split(' ')[32]
+            console.log("this.idSelectedFound");
+            console.log(this.idSelectedFound);
+
+            selectedUrl = `http://localhost:3000/api/post/${this.idSelectedFound}`
+            fetch(selectedUrl, {
+                method: "DELETE",
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-type': 'application/json',
+                    Authorization: `Bearer ${token}`
+                },
+            })
         }
+
     },
 })
 // posts.addEventListener('load', seePosts());

@@ -116,8 +116,7 @@
                                     <h4> par: {{ post.pseudo }} </h4>
                                 </div>
                                 <div class="image_post" v-if='post.imageUrl !=""'>
-                                    <img src='{{ post.imageUrl }}'  />
-                                    <alt={{ post.titre }}/>                                
+                                    <img src='{{ post.imageUrl }}'  alt={{ post.titre }}/>                               
                                 </div>
                                <div class="text_post">
                                     {{ post.contenu }}
@@ -125,7 +124,7 @@
                                 <id class="post-id">
                                 {{ post.id }}
                                 </id>
-                                <div class="buttons" @click="coucou">                    
+                                <div class="buttons" @click="coucou" id=":{{ post.id }}">                    
                                     <button id="comment_post" > voir + </button>
                                 </div>
                             </post>
@@ -139,8 +138,7 @@
                     <h3>par {{this.selectedUser}}</h3>
                     <div id="posts_contenu" class="contenu">
                             <div class="image_post" v-if='this.selectedImageUrl !=""'>
-                                <img src="{{ this.selectedImageUrl }}"  />
-                                <alt={{ this.selectedTitle }}/>                                
+                                <img src="{{ this.selectedImageUrl }}"  alt= {{ this.selectedTitle }}/>                              
                             </div>
                             <div class="text_post">
                                 {{ this.selectedContain }}
@@ -148,12 +146,12 @@
                             <div class="buttons">
                                 <button class="update_post" @click="modifier"> modifier </button>
                                 <button class="comment_post" @click="commenter"> commenter </button>
-                                <button class="delete_post" > supprimer </button>
+                                <button class="delete_post" @click="supprimer"> supprimer </button>
                             </div>
                             <form id="modificationForm" class="contenu_creation" enctype="multipart/form-data" v-show="goToModify">
                                 <div id="post__title">
-                                    <label for="modificationTitle"><h3> titre: {{ this.selectedTitle }}</h3></label>
-                                    <input id="modificationTitle" name ="modificationTitle" v-model="selectedTitle" type="text" placeholder= "   votre titre"/>
+                                    <label for="modificationTitle"><h3> titre: {{ this.modifiedTitle }}</h3></label>
+                                    <input id="modificationTitle" name ="modificationTitle"  v-model="modifiedTitle" type="text" placeholder= "   votre titre"/>
                                 </div>
                                 <div id="post__image">
                                     <label for="modificationfile"><h3>emplacement de l'image</h3></label>
@@ -166,8 +164,8 @@
                                 </div>
                                 <div id="post__text">
                                     <label for="modificationText"><h3> texte</h3></label>
-                                    <textarea id="modificationText" name ="modificationText" v-model="selectedContain">
-                                        {{ this.selectedContain }}
+                                    <textarea id="modificationText" name ="modificationText" v-model="modifiedContain">
+                                        
                                     </textarea>
                                     
                                 </div>

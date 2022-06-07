@@ -42,8 +42,8 @@ exports.createPost = async (req, res) => {
     // console.log(req.auth.userId)
     console.log("req.file")
     console.log(req.file)
-    // const imageUrl = req.file ? `${req.protocol}://${req.get('host')}/medias/${req.file.filename}` : "";
-    const imageUrl = req.file ? `${req.protocol}://${req.get('host')}/images/${req.file.filename}` : "";
+    const imageUrl = req.file ? `${req.protocol}://${req.get('host')}/medias/${req.file.filename}` : "";
+    // const imageUrl = req.file ? `${req.protocol}://${req.get('host')}/images/${req.file.filename}` : "";
     console.log("imageUrl")
     console.log(imageUrl)
     //const postObject = JSON.parse(req.body);
@@ -195,10 +195,16 @@ exports.modifyPost = async (req, res) => {
         const id = req.params.id;
         console.log("id")
         console.log(id)
-        console.log("req.body")
+        console.log("req.body modifié")
         console.log(req.body)
-        console.log("req.auth")
-        console.log(req.auth)
+        console.log("req.body.titre modifié")
+        console.log(req.body.titre)
+        const modifiedTitle = req.body.titre
+        console.log("req.body.contenu modifié")
+        console.log(req.body.contenu)
+        const modifiedContain = req.body.contenu
+        // console.log("req.auth")
+        // console.log(req.auth)
         const unPost = await mysqlConnection.query(
             "SELECT post.id, post.titre, post.contenu, post.imageUrl, post.timestamp, post.userId, user.admin FROM post JOIN user on post.userId=user.id where post.id = ? ", [id],
             (error, results) => {
@@ -210,12 +216,12 @@ exports.modifyPost = async (req, res) => {
                     console.log(results)
                     res.status(200).json({ results });
                     // 2- a t'on le droit de modifier ce post ?
-                    console.log("results[0].userId")
-                    console.log(results[0].userId)
-                    console.log("req.auth.userId")
-                    console.log(req.auth.userId)
-                    console.log("results[0].admin")
-                    console.log(results[0].admin)
+                    // console.log("results[0].userId")
+                    // console.log(results[0].userId)
+                    // console.log("req.auth.userId")
+                    // console.log(req.auth.userId)
+                    // console.log("results[0].admin")
+                    // console.log(results[0].admin)
                     if (req.auth.userId == results[0].userId || results[0].admin != null) {
                         console.log('utilisateur autorisé');
                         // 3- ya t'il un fichier joint?
@@ -223,8 +229,10 @@ exports.modifyPost = async (req, res) => {
                             // 4- identifier le fichier à supprimer
                             const fileName = results[0].imageUrl.split("/medias")[1];
                             // 5- supprimer le fichier remplacé
-                            fs.unlink(`media/${filename}`, (error) => {
-                                if (error) throw error;
+                            fs.unlink(`media/${fileName}`, (error) => {
+                                if (error) {
+                                    console.log(error);
+                                }
                             })
                         }
                         // 4- on met a jour notre post (avec et sans MAJ image)
@@ -234,10 +242,11 @@ exports.modifyPost = async (req, res) => {
                             ...JSON.parse(req.body.post),
                             imageUrl: `${req.protocol}://${req.get('host')}/medias/${req.file.filename}`
                         } : { ...req.body.post }
-
+                        console.log("postObject modif")
+                        console.log(postObject)
                         // 7- on met a jour la BDD
-                        const { titre, contenu, imageUrl } = postObject;
-                        const sendToDatabase = req.file ?
+                        // const { titre, contenu, imageUrl } = postObject;
+                        const reSendToDatabase = req.file ?
                             `UPDATE post 
                         SET 
                         titre = ?, 
@@ -251,12 +260,16 @@ exports.modifyPost = async (req, res) => {
                         contenu = ? 
                         WHERE id = ?`
                             ;
-                        const values = req.file ?
-                            [titre, contenu, imageUrl, id]
+                        console.log("reSendToDatabase")
+                        console.log(reSendToDatabase)
+                        const newValues = req.file ?
+                            [modifiedTitle, modifiedContain, imageUrl, id]
                             :
-                            [titre, contenu, id]
+                            [modifiedTitle, modifiedContain, id]
                             ;
-                        mysqlConnection.query(sendToDatabase, values, (error, results) => {
+                        console.log("newValues")
+                        console.log(newValues)
+                        mysqlConnection.query(reSendToDatabase, newValues, (error, results) => {
                             if (error) {
                                 console.log("souci d'envoi de la maj")
                                 res.status(500).json({ error });
@@ -308,9 +321,8 @@ exports.deletePost = async (req, res) => {
     try {
         const id = req.params.id;
         // 1- on va chercher l'objet
-
         const unPost = await mysqlConnection.query(
-            "SELECT * FROM post WHERE id= ? ", [id],
+            "SELECT post.id, post.titre, post.contenu, post.imageUrl, post.timestamp, post.userId, user.admin FROM post JOIN user on post.userId=user.id where post.id = ? ", [id],
             (error, results) => {
                 if (error) {
                     console.log("erreur dans la requete d'affichage pour suppression du post");
@@ -323,14 +335,23 @@ exports.deletePost = async (req, res) => {
                         console.log('post inexistant');
                         return res.status(404).json({ error })
                     }
+                    console.log("req.auth.userId suppression")
+                    console.log(req.auth.userId)
+                    console.log("results[0]")
+                    console.log(results[0])
+                    console.log("results[0].userId")
+                    console.log(results[0].userId)
                     // 2- a t'on le droit de modifier ce post ?
-                    if (userIdParamsUrl == results[0].id  /*||  ou results[0].id est admin*/) {
+                    if (req.auth.userId == results[0].userId || results[0].admin != null) {
                         console.log('utilisateur autorisé à supprimer');
                         // 4- identifier le fichier à supprimer
                         const fileName = results[0].imageUrl.split("/medias")[1];
                         // 5- supprimer le fichier remplacé
-                        fs.unlink(`media/${filename}`, (error) => {
-                            if (error) throw error;
+                        fs.unlink(`media/${fileName}`, (error) => {
+                            if (error) {
+                                console.log("erreur lors de la suppression de fichier")
+                                console.log(error);
+                            }
                         })
                         // 6- mettre a jour le post avant suppression
                         const values = [id]
