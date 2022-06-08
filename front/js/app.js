@@ -284,16 +284,11 @@ new Vue({
                 .then(function (res) {
                     if (res.ok) {
                         console.log("id récupéré pour creation de post")
-                        // whoAmI= l'id que je dois trouver dans le res
-                        // console.log("res")
-                        // console.log(res)
-                        // console.log("res.body")
-                        // console.log(res.body)
                         return res.json();
                     }
                 })
                 .then((id) => {
-                    // console.log("id")
+                    console.log("id")
                     console.log(id)
                 })
 
@@ -319,11 +314,8 @@ new Vue({
             fetch("http://localhost:3000/api/post", {
                 method: "POST",
                 headers: {
-                    // 'Accept': 'application/json',
-                    // 'Content-type': 'application/json',
                     Authorization: `Bearer ${token}`
                 },
-                // body: JSON.stringify(creationToSend)
                 body: formDataCreation
             })
                 .then(function (res) {
@@ -348,12 +340,9 @@ new Vue({
         seePosts: function () {
             this.seeAllPosts = !this.seeAllPosts
             this.createMode = false
-            // console.log("this.seeAllPosts")
-            // console.log(this.seeAllPosts)
             console.log('seePosts')
             //on recupère l'id du comte connecté 
             let token = localStorage.getItem("token");
-
             fetch("http://localhost:3000/api/auth/me", {
                 method: "GET",
                 headers: {
@@ -369,11 +358,7 @@ new Vue({
                     }
                 })
                 .then((id) => {
-                    // console.log("id")
-                    // console.log(id)
                     this.whoAmI = id.idFound;
-                    // console.log("qui suis-je ?")
-                    // console.log(this.whoAmI)
                 })
 
                 .catch(function (err) {
@@ -391,26 +376,15 @@ new Vue({
             })
                 .then(function (res) {
                     if (res.ok) {
-                        // console.log(res)
                         return res.json();
-
                     } else {
                         console.log('utilisateur ou mot de passe incorrect')
-
                     }
                 })
                 .then((data) => {
-
-                    // console.log(data)
-                    // console.log(data.results)
                     this.posts = data.results
-                    // console.log("this.whoAmI")
-                    // console.log(this.whoAmI)
                     console.log("this.posts")
                     console.log(this.posts)
-                    // console.log('whoAmI')
-                    // console.log(this.whoAmI)
-
                 })
                 .catch(function (err) {
                     console.error(err)
@@ -440,21 +414,15 @@ new Vue({
             })
                 .then(function (res) {
                     if (res.ok) {
-                        // console.log(res)
                         return res.json();
-
                     } else {
                         console.log('utilisateur ou mot de passe incorrect')
-
                     }
                 })
                 .then((data) => {
                     // console.log('resultats du getOne')
                     // console.log(data)
                     const whatISee = data.results[0]
-                    console.log(data.results[0])
-                    console.log("data.results")
-                    console.log(data.results)
                     this.seeAllPosts = false
                     this.selectedTitle = whatISee.titre
                     this.selectedId = whatISee.id
@@ -497,8 +465,6 @@ new Vue({
                     console.log(data.results[0])
                     console.log("data.results")
                     console.log(data.results)
-
-
                     console.log('whoAmI')
                     console.log(this.whoAmI)
                 })
@@ -532,11 +498,6 @@ new Vue({
                 .then(function (res) {
                     if (res.ok) {
                         console.log("id récupéré pour commentaire")
-                        // whoAmI= l'id que je dois trouver dans le res
-                        // console.log("res")
-                        // console.log(res)
-                        // console.log("res.body")
-                        // console.log(res.body)
                         return res.json();
                     }
                 })
@@ -664,18 +625,12 @@ new Vue({
                     }
                 })
                 .then((id) => {
-                    // console.log("id")
-                    // console.log(id)
                     this.whoAmI = id.idFound;
-                    // console.log("qui suis-je ?")
-                    // console.log(this.whoAmI)
                 })
-
                 .catch(function (err) {
                     console.error(err)
                     alert("souci avec l'envoi recupId : réessayez ultérieurement")
                 });
-
             selectedUrl = `http://localhost:3000/api/post/${this.selectedId}`
             fetch(selectedUrl, {
                 method: "DELETE",
@@ -693,7 +648,5 @@ new Vue({
                     console.log('souci')
                 })
         },
-
     },
 })
-// posts.addEventListener('load', seePosts());
