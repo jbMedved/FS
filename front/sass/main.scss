@@ -124,6 +124,10 @@ border-radius: 10px;
   align-self: flex-start;
   }
 }
+.errorMessage{
+  font-weight: bold;
+  color: red;
+}
 
 #allComments {
   border: 1px solid black;

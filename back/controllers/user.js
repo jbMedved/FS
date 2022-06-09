@@ -20,6 +20,13 @@ exports.signup = (req, res, next) => {
     // on récupere l'email, le mot de passe, le nom et le prénom
     const { email, password, LastName, FirstName } = req.body
 
+    /////////////////////////
+    // note pour plus tard //
+    /////////////////////////
+
+    ////////////////////////////////
+    // mettre regex en back aussi //
+    ////////////////////////////////
     //on veut  que l'adresse mail saisie soit l'adresse mail pro
     // regexMail = /^[^@\s]+@[^@\s]+\.[^@\s]+$/g;
     // regexPassword = /^(?=.{8,}$)(?=(?:.*?[A-Z]))(?=.*?[a-z])(?=(?:.*?[0-9])).*$/g;
@@ -87,11 +94,11 @@ exports.login = (req, res, next) => {
                         }
                         // si le mot de passe correspond
                         console.log('le pwd est bon');
-                        console.log(results[0]);
+                        // on en récupere l'id de l'utilisateur et s'il est admin et on insere le tout dans notre token
                         res.status(200).json({
                             userId: results[0].id,
                             token: jwt.sign(
-                                { userId: results[0].id },
+                                { userId: results[0].id, admin: results[0].admin },
                                 'SECUREKEY',
                                 { expiresIn: '12h' }
                             ),

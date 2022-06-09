@@ -459,6 +459,11 @@ h2 {
   align-self: flex-start;
 }
 
+.errorMessage {
+  font-weight: bold;
+  color: red;
+}
+
 #allComments {
   border: 1px solid black;
   width: 90%;

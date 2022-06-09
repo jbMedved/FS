@@ -3,26 +3,18 @@ const jwt = require('jsonwebtoken');
 
 module.exports = (req, res, next) => {
     try {
-        // console.log('req')
-        // console.log(req)
-        // console.log("req.headers.authorization");
-        // console.log(req.headers.authorization);
-        // console.log('req.headers["authorization"]');
-        // console.log(req.headers["authorization"]);
         const token = req.headers.authorization.split(' ')[1];
-        // console.log("token");
-        // console.log(token);
+        // le token est il vide?
+        if (token == [] || token == undefined || token == null) {
+            throw res.status(401).json({ error: error | 'requête non authentifiée' });
+        }
+        //s'il n'est pas vide, on le décode
         const decodedToken = jwt.verify(token, 'SECUREKEY');
-        // console.log("decodedToken");
-        // console.log(decodedToken);
-        const userId = decodedToken.userId;
-        // console.log("userId");
-        // console.log(userId);
 
-        // console.log('decodedToken.userId');
-        // console.log(decodedToken.userId);
-        // console.log(req)
-        req.auth = { userId };
+        const userId = decodedToken.userId;
+        const admin = decodedToken.admin;
+
+        req.auth = { userId, admin };
         if (req.body.userId && req.body.userId !== userId) {
             throw 'ID utilisateur non valable';
         } else {

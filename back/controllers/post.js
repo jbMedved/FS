@@ -220,8 +220,9 @@ exports.modifyPost = async (req, res) => {
                 } else {
                     console.log("modif results")
                     console.log(results)
-
-                    if (req.auth.userId == results[0].userId || results[0].admin != null) {
+                    console.log("req.auth admin")
+                    console.log(req.auth.admin)
+                    if (req.auth.userId == results[0].userId || req.auth.admin != null) {
                         console.log('utilisateur autorisé');
                         // 3- ya t'il un fichier joint?
                         if (req.file) {
@@ -277,7 +278,7 @@ exports.modifyPost = async (req, res) => {
                         //         console.log("maj effectuée")
                         //         // console.log(results)
                         res.status(201).end() // .json({ results: "youpi" });
-                        console.log('pouet')
+                        // console.log('pouet')
                         //     }
                         // })
                     } else {
@@ -339,12 +340,16 @@ exports.deletePost = async (req, res) => {
                     }
                     console.log("req.auth.userId suppression")
                     console.log(req.auth.userId)
+                    console.log("req.auth suppression")
+                    console.log(req.auth)
                     console.log("results[0]")
                     console.log(results[0])
                     console.log("results[0].userId")
                     console.log(results[0].userId)
+                    console.log("req.auth admin")
+                    console.log(req.auth.admin)
                     // 2- a t'on le droit de modifier ce post ?
-                    if (req.auth.userId == results[0].userId || results[0].admin != null) {
+                    if (req.auth.userId == results[0].userId || req.auth.admin != null) {
                         console.log('utilisateur autorisé à supprimer');
                         // 4- identifier le fichier à supprimer
                         console.log(results[0].imageUrl);

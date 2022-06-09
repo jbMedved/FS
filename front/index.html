@@ -38,9 +38,9 @@
                 <div id="login" class="connection">
                     <h2 @click="changeLoginOn">se connecter</h2>
                     <form  class="contenu" v-show ="loginOn">
-                        <label for="loginmail"><h3>email : {{ login_email }}</h3></label>
+                        <label for="loginmail"><h3>email : </h3></label>
                         <input id="loginmail" v-model="login_email" type="text" placeholder= "   email entreprise"/>
-                        <label for="loginpwd"><h3> mot de passe : {{ login_password }}</h3></label>
+                        <label for="loginpwd"><h3> mot de passe : </h3></label>
                         <input id="loginpwd" v-model="login_password" type="password" />
                         <button id="login_validation" @click="loginValidation"> VALIDER</button>
                     </form>
@@ -48,18 +48,20 @@
                 <div id="signup" class="connection">
                     <h2 @click="changeSignupOn">créer un compte</h2>
                     <form  id="form_signup" class="contenu" v-show ="signupOn">
-                        <label for="signupmail"><h3>email : {{ signup_email }}</h3></label>
+                        <label for="signupmail"><h3>email : </h3></label>
                         <input id="signupmail" v-model="signup_email" type="text" placeholder= "   email entreprise"/>
-                        <div id="email_error_message"></div>
-                        <label for="signuppwd"><h3>mot de passe : {{ signup_password }}</h3></label>
+                        <div id="emailErrorMsg" class="errorMessage">{{ this.emailErrorMsgContain}}</div>
+                        <label for="signuppwd"><h3>mot de passe : </h3></label>
                         <input id="signuppwd" v-model="signup_password" type="password" />
-                        <div id="password_error_message"></div>                
-                        <label for="signuplastname"><h3>nom : {{ signup_lastName }}</h3></label>
+                        <div id="passwordErrorMsg" class="errorMessage">{{ this.passwordErrorMsgContain}}</div>
+                        <label for="signuppwd2"><h3>confirmer mot de passe : </h3></label>  
+                        <input id="signuppwd2" v-model="signup_password2" type="password" placeholder= "   repetez le mot de passe svp"/>                
+                        <div id="passwordErrorMsg2" class="errorMessage">{{ this.passwordErrorMsgContain2}}</div>
+                        <label for="signuplastname"><h3>nom : </h3></label>
                         <input id="signuplastname" v-model="signup_lastName" type="text" />                
-                        <label for="signupfirstname"><h3>prenom : {{ signup_firstName }}</h3></label>
+                        <label for="signupfirstname"><h3>prenom : </h3></label>
                         <input id="signupfirstname" v-model="signup_firstName" type="text" />
-                        <label for="signuppwd2"><h3>mot de passe : {{ signup_password2 }}</h3></label>
-                        <input id="signuppwd2" v-model="signup_password2" type="password" placeholder= "   repetez le mot de passe svp"/>
+       
                         <button id="signup_validation" @click="signupValidation"> VALIDER</button>
                     </form>
                 </div>
