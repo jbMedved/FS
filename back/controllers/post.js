@@ -12,21 +12,6 @@ const mysqlConnection = require('../database/mysql');
 
 
 
-/////////////////////////
-// la création de post //
-/////////////////////////
-// exports.createPost = (req, res, next) => {
-//     const postObject = JSON.parse(req.body.post)
-//     delete postObject._id;
-//     const post = new Post({
-//         ...postObject,
-//         imageUrl: `${req.protocol}://${req.get('host')}/medias/${req.file.filename}`
-//     });
-//     post.save()
-//         .then(() => res.status(201).json({ message: "post créé" }))
-//         .catch(error => res.status(400).json({ error }));
-// };
-
 exports.createPost = async (req, res) => {
     // console.log("req")
     // console.log(req)
@@ -40,52 +25,39 @@ exports.createPost = async (req, res) => {
     // console.log(req.auth)
     // console.log("req.auth.userId")
     // console.log(req.auth.userId)
-    console.log("req.file")
-    console.log(req.file)
+    // console.log("req.file")
+    // console.log(req.file)
     const imageUrl = req.file ? `${req.protocol}://${req.get('host')}/medias/${req.file.filename}` : "";
-    // const imageUrl = req.file ? `${req.protocol}://${req.get('host')}/images/${req.file.filename}` : "";
-    console.log("imageUrl")
-    console.log(imageUrl)
-    //const postObject = JSON.parse(req.body);
+    // console.log("imageUrl")
+    // console.log(imageUrl)
+
     const postObject = req.body;
-    // console.log("postObject")
-    // console.log(postObject)
+
     const userId = req.auth.userId
     const { titre, contenu } = postObject;
     // console.log('3')
-    console.log("userId")
-    console.log(userId)
+    // console.log("userId")
+    // console.log(userId)
     // console.log("titre")
     // console.log(titre)
     // console.log("contenu")
     // console.log(contenu)
 
     const post = new Post(titre, contenu, userId, imageUrl);
-    console.log('4')
-    console.log(post)
+    // console.log('4')
+    // console.log(post)
     const values = [userId, titre, contenu, imageUrl];
     try {
         const envoiPost = mysqlConnection.query(
             `INSERT INTO post(userId, titre, contenu, imageUrl)
             VALUES (?)`, [values]
-            // (error, results) => {
-            //     if (error) {
-            //         console.log("erreur dans la requete de creation des posts");
-            //         res.json({ error });
-            //     } else {
-            //         console.log('creation effectuée')
-            //         console.log(results)
-            //         res.status(201).json({ results: "pouet" });
-            //         // console.log("res")
-            //         // console.log(res)
-            //     }
-            // }
+
         );
         res.status(201).json({ results: "pouet" })
         // console.log(envoiPost);
     }
     catch (err) {
-        console.log('souci avec createPost')
+        // console.log('souci avec createPost')
         res.status(500).json({ error: err });
     }
 
@@ -94,12 +66,6 @@ exports.createPost = async (req, res) => {
 ///////////////////////////
 // l'affichage des posts //
 ///////////////////////////
-
-// exports.getAllPosts = (req, res, next) => {
-//     Post.find()
-//         .then(posts => res.status(200).json(posts))
-//         .catch(error => res.status(400).json({ error }))
-// };
 
 exports.getAllPosts = async (req, res) => {
     try {
@@ -122,22 +88,13 @@ exports.getAllPosts = async (req, res) => {
     }
 }
 
-///////////////////////////
-// l'affichage d'un post //
-///////////////////////////
-
-// exports.getOnePost = (req, res, next) => {
-//     Post.findOne({ _id: req.params.id })
-//         .then(post => res.status(200).json(post))
-//         .catch(error => res.status(404).json({ error }))
-// };
 
 exports.getOnePost = async (req, res) => {
     try {
         const id = req.params.id;
         // console.log(id)
         const unPost = await mysqlConnection.query(
-            "SELECT post.id, post.titre, post.contenu, post.imageUrl, post.timestamp, post.userId, user.pseudo FROM post JOIN user on post.userId=user.id where post.id = ? ", [id],
+            "SELECT post.id, post.titre, post.contenu, post.imageUrl, post.timestamp, post.userId, user.pseudo, user.admin FROM post JOIN user on post.userId=user.id where post.id = ? ", [id],
             (error, results) => {
                 if (error) {
                     console.log("erreur dans la requete d'affichage du post");
@@ -184,30 +141,19 @@ exports.getOnePost = async (req, res) => {
 // la modification  d'un post //
 ////////////////////////////////
 
-//     const postObject = req.file ?
-//         {
-//             ...JSON.parse(req.body.post),
-//             imageUrl: `${req.protocol}://${req.get('host')}/medias/${req.file.filename}`
-//         } : { ...req.body };
-//     Post.updateOne({ _id: req.params.id }, { ...postObject, _id: req.params.id })
-//         .then(() => res.status(200).json({ message: 'post modifié' }))
-//         .catch(error => res.status(404).json({ error }))
-// };
-
-
 exports.modifyPost = async (req, res) => {
     try {
         // 1- on va chercher l'objet
         const id = req.params.id;
-        console.log("id")
-        console.log(id)
-        console.log("req.body modifié")
-        console.log(req.body)
-        console.log("req.body.titre modifié")
-        console.log(req.body.titre)
+        // console.log("id")
+        // console.log(id)
+        // console.log("req.body modifié")
+        // console.log(req.body)
+        // console.log("req.body.titre modifié")
+        // console.log(req.body.titre)
         const modifiedTitle = req.body.titre
-        console.log("req.body.contenu modifié")
-        console.log(req.body.contenu)
+        // console.log("req.body.contenu modifié")
+        // console.log(req.body.contenu)
         const modifiedContain = req.body.contenu
         // console.log("req.auth")
         // console.log(req.auth)
@@ -215,15 +161,15 @@ exports.modifyPost = async (req, res) => {
             "SELECT post.id, post.titre, post.contenu, post.imageUrl, post.timestamp, post.userId, user.admin FROM post JOIN user on post.userId=user.id where post.id = ? ", [id],
             (error, results) => {
                 if (error) {
-                    console.log("erreur dans la requete d'affichage pour update du post");
+                    // console.log("erreur dans la requete d'affichage pour update du post");
                     res.json({ error });
                 } else {
-                    console.log("modif results")
-                    console.log(results)
-                    console.log("req.auth admin")
-                    console.log(req.auth.admin)
+                    // console.log("modif results")
+                    // console.log(results)
+                    // console.log("req.auth admin")
+                    // console.log(req.auth.admin)
                     if (req.auth.userId == results[0].userId || req.auth.admin != null) {
-                        console.log('utilisateur autorisé');
+                        // console.log('utilisateur autorisé');
                         // 3- ya t'il un fichier joint?
                         if (req.file) {
                             // 4- identifier le fichier à supprimer
@@ -242,8 +188,8 @@ exports.modifyPost = async (req, res) => {
                             // ...JSON.parse(req.body.post),
                             imageUrl: `${req.protocol}://${req.get('host')}/medias/${req.file.filename}`
                         } : { ...req.body }
-                        console.log("postObject modif")
-                        console.log(postObject)
+                        // console.log("postObject modif")
+                        // console.log(postObject)
                         // 7- on met a jour la BDD
                         // const { titre, contenu, imageUrl } = postObject;
                         const reSendToDatabase = req.file ?
@@ -260,15 +206,15 @@ exports.modifyPost = async (req, res) => {
                         contenu = ? 
                         WHERE id = ?`
                             ;
-                        console.log("reSendToDatabase")
-                        console.log(reSendToDatabase)
+                        // console.log("reSendToDatabase")
+                        // console.log(reSendToDatabase)
                         const newValues = req.file ?
                             [modifiedTitle, modifiedContain, postObject.imageUrl, id]
                             :
                             [modifiedTitle, modifiedContain, id]
                             ;
-                        console.log("newValues")
-                        console.log(newValues)
+                        // console.log("newValues")
+                        // console.log(newValues)
                         mysqlConnection.query(reSendToDatabase, newValues)
                         // , (error, results) => {
                         //     if (error) {
@@ -282,7 +228,7 @@ exports.modifyPost = async (req, res) => {
                         //     }
                         // })
                     } else {
-                        console.log('modification non autorisée par cet utilisateur');
+                        // console.log('modification non autorisée par cet utilisateur');
                         res.status(403).json({ message: "vous n'etes pas autorisé a apporter des modifications" })
                     }
                 }
@@ -290,7 +236,7 @@ exports.modifyPost = async (req, res) => {
         );
     }
     catch (err) {
-        console.log('souci avec createPost')
+        // console.log('souci avec createPost')
         res.status(500).json({ error: err });
     }
 }
@@ -298,27 +244,6 @@ exports.modifyPost = async (req, res) => {
 //////////////////////////////
 // la suppression d'un post //
 //////////////////////////////
-
-//     Post.findOne({ _id: req.params.id })
-//         .then(post => {
-//             const filename = thing.imageUrl.split('/medias/')[1];
-//             fs.unlink(`medias/${filename}`, () => {
-//                 Post.findOne({ _id: req.params.id })
-//                     .then((post) => {
-//                         if (!post) {
-//                             return res.status(404).json({ error: new Error('post introuvable') })
-//                         };
-//                         if (post.userId !== req.auth.userId) {
-//                             return res.status(401).json({ error: new Error('requete non autorisée') })
-//                         }
-//                         Post.deleteOne({ _id: req.params.id })
-//                             .then(() => res.status(200).json({ message: 'post supprimé' }))
-//                             .catch(error => res.status(404).json({ error }))
-//                     })
-//             })
-//         })
-//         .catch(error => res.status(404).json({ error }))
-// };
 
 exports.deletePost = async (req, res) => {
     try {
@@ -328,38 +253,38 @@ exports.deletePost = async (req, res) => {
             "SELECT post.id, post.titre, post.contenu, post.imageUrl, post.timestamp, post.userId, user.admin FROM post JOIN user on post.userId=user.id where post.id = ? ", [id],
             (error, results) => {
                 if (error) {
-                    console.log("erreur dans la requete d'affichage pour suppression du post");
+                    // console.log("erreur dans la requete d'affichage pour suppression du post");
                     res.json({ error });
                 } else {
                     // res.status(200).json({ results });
                     if (results != 0) {
-                        console.log("post existant")
+                        // console.log("post existant")
                     } else {
-                        console.log('post inexistant');
+                        // console.log('post inexistant');
                         return res.status(404).json({ error })
                     }
-                    console.log("req.auth.userId suppression")
-                    console.log(req.auth.userId)
-                    console.log("req.auth suppression")
-                    console.log(req.auth)
-                    console.log("results[0]")
-                    console.log(results[0])
-                    console.log("results[0].userId")
-                    console.log(results[0].userId)
-                    console.log("req.auth admin")
-                    console.log(req.auth.admin)
+                    // console.log("req.auth.userId suppression")
+                    // console.log(req.auth.userId)
+                    // console.log("req.auth suppression")
+                    // console.log(req.auth)
+                    // console.log("results[0]")
+                    // console.log(results[0])
+                    // console.log("results[0].userId")
+                    // console.log(results[0].userId)
+                    // console.log("req.auth admin")
+                    // console.log(req.auth.admin)
                     // 2- a t'on le droit de modifier ce post ?
                     if (req.auth.userId == results[0].userId || req.auth.admin != null) {
-                        console.log('utilisateur autorisé à supprimer');
+                        // console.log('utilisateur autorisé à supprimer');
                         // 4- identifier le fichier à supprimer
-                        console.log(results[0].imageUrl);
+                        // console.log(results[0].imageUrl);
                         const fileName = results[0].imageUrl.split("/medias")[1];
-                        console.log(fileName)
+                        // console.log(fileName)
                         // 5- supprimer le fichier remplacé
                         fs.unlink(`medias/${fileName}`, (error) => {
                             if (error) {
-                                console.log("erreur lors de la suppression de fichier")
-                                console.log(error);
+                                // console.log("erreur lors de la suppression de fichier")
+                                // console.log(error);
                             }
                         })
                         // 6- mettre a jour le post avant suppression
@@ -368,15 +293,15 @@ exports.deletePost = async (req, res) => {
                         mysqlConnection.query(
                             `DELETE FROM post WHERE id = ?`, values, (error, results) => {
                                 if (error) {
-                                    console.log("souci d'envoi de la suppression")
+                                    // console.log("souci d'envoi de la suppression")
                                     res.status(500).json({ error });
                                 } else {
-                                    console.log("suppression effectuée")
+                                    // console.log("suppression effectuée")
                                     res.status(201).json({ results });
                                 }
                             })
                     } else {
-                        console.log('suppression non autorisée par cet utilisateur');
+                        // console.log('suppression non autorisée par cet utilisateur');
                         res.status(403).json({ message: "vous n'etes pas autorisé a apporter des modifications" })
                     }
                 }
@@ -384,7 +309,7 @@ exports.deletePost = async (req, res) => {
         )
     }
     catch (err) {
-        console.log('souci avec deletePost')
+        // console.log('souci avec deletePost')
         res.status(500).json({ error: err });
     }
 }
@@ -396,8 +321,8 @@ exports.deletePost = async (req, res) => {
 exports.createComment = async (req, res) => {
     // console.log("req")
     // console.log(req)
-    console.log("req.body")
-    console.log(req.body)
+    // console.log("req.body")
+    // console.log(req.body)
     const contenu = req.body.contenu
     const postId = req.body.postId
     // console.log("req.body.postId")
@@ -417,8 +342,8 @@ exports.createComment = async (req, res) => {
     const userId = req.auth.userId
     // const { postId, contenu } = commObject;
     // console.log('3')
-    console.log("userId")
-    console.log(userId)
+    // console.log("userId")
+    // console.log(userId)
     // console.log("titre")
     // console.log(titre)
     // console.log("contenu")
@@ -426,7 +351,7 @@ exports.createComment = async (req, res) => {
 
     const commentaire = new Commentaire(postId, userId, contenu);
     // console.log('4 bis')
-    console.log(commentaire)
+    // console.log(commentaire)
     const values = [postId, userId, contenu];
     try {
         const envoiPost = await mysqlConnection.query(
@@ -434,10 +359,10 @@ exports.createComment = async (req, res) => {
                 VALUES (?)`, [values],
             (error, results) => {
                 if (error) {
-                    console.log("erreur dans la requete de creation des commentaires");
+                    // console.log("erreur dans la requete de creation des commentaires");
                     res.json({ error });
                 } else {
-                    console.log("c'est parti")
+                    // console.log("c'est parti")
                     // console.log(results)
                     res.status(201).json({ results });
                 }
@@ -445,7 +370,7 @@ exports.createComment = async (req, res) => {
         );
     }
     catch (err) {
-        console.log('souci avec createComment')
+        // console.log('souci avec createComment')
         res.status(500).json({ error: err });
     }
 }
@@ -457,25 +382,25 @@ exports.createComment = async (req, res) => {
 exports.getAllComments = async (req, res) => {
     try {
         const id = JSON.parse(req.params.id);
-        console.log(id)
+        // console.log(id)
 
         const lesComms = await mysqlConnection.query(
             "SELECT commentaire.contenu, commentaire.postId, commentaire.timestamp, post.id, user.pseudo FROM commentaire JOIN post on commentaire.postId=post.id JOIN user on commentaire.userId=user.id where post.id = ? order by commentaire.timestamp DESC", [id],
             (error, results) => {
                 if (error) {
-                    console.log("erreur dans la requete d'affichage des commentaires");
-                    console.log((error));
+                    // console.log("erreur dans la requete d'affichage des commentaires");
+                    // console.log((error));
                     res.json({ error });
                 } else {
-                    console.log("getAllComments")
-                    console.log(results);
+                    // console.log("getAllComments")
+                    // console.log(results);
                     res.status(200).json({ results });
                 }
             }
         );
     }
     catch (err) {
-        console.log('souci avec getAllPosts')
+        // console.log('souci avec getAllPosts')
         res.status(500).json({ error: err });
     }
 }

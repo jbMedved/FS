@@ -79,10 +79,10 @@ exports.login = (req, res, next) => {
             if (error) {
                 res.json({ error });
             } else {
-                console.log('vérifions si le compte existe');
+                // console.log('vérifions si le compte existe');
                 // si pas de resultat, alors pas de compte existant
                 if (results == 0) {
-                    console.log('ya personne');
+                    // console.log('ya personne');
                     return res.status(404).json({ error: "utilisateur inexistant" })
                 }
                 // sinon, on va comparer maintenant le mot de passe
@@ -93,7 +93,7 @@ exports.login = (req, res, next) => {
                             return res.status(401).json({ error: "mauvais mot de passe" });
                         }
                         // si le mot de passe correspond
-                        console.log('le pwd est bon');
+                        // console.log('le pwd est bon');
                         // on en récupere l'id de l'utilisateur et s'il est admin et on insere le tout dans notre token
                         res.status(200).json({
                             userId: results[0].id,
@@ -132,7 +132,7 @@ exports.recupId = function (req, res) {
             // console.log("on a l'id lié au TOKEN")
             res.status(200).json({ idFound });
         } catch (e) {
-            console.log("souci pour retrouver l'id depuis token")
+            // console.log("souci pour retrouver l'id depuis token")
             return res.status(401).send('unauthorized');
         }
         // on a l'id 

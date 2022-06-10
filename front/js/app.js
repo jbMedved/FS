@@ -13,7 +13,7 @@ const signupfirstnameText = ""
 const signuppwd2Text = ""
 
 //on veut  que l'adresse mail saisie soit l'adresse mail pro
-regexMail = /^[^@\s]+@[groupomania]+\.[fr]+$/g;
+regexMail = /^[^@\s]+@groupomania+\.fr+$/g;
 regexPassword = /^(?=.{8,}$)(?=(?:.*?[A-Z]))(?=.*?[a-z])(?=(?:.*?[0-9])).*$/g;
 
 // if (mail.match(regexMail) == null) {
@@ -47,6 +47,7 @@ regexPassword = /^(?=.{8,}$)(?=(?:.*?[A-Z]))(?=.*?[a-z])(?=(?:.*?[0-9])).*$/g;
 new Vue({
     el: 'allThePage',
     data: {
+        entreprise: "groupomania",
         menuOn: true,
         loginOn: true,
         signupOn: true,
@@ -81,6 +82,8 @@ new Vue({
         selectedContain: "",
         selectedUser: "",
         selectedId: "",
+        selectedUserId: "",
+        selectedUserAdmin: "",
         addComment: false,
         commentText: "",
         idSelectedFound: "",
@@ -89,6 +92,7 @@ new Vue({
         modifiedTitle: "",
         modifiedContain: "",
         allComments: "",
+        haveIRights: true,
     },
     methods: {
         // ici c'est pour afficher ou non le contenu des diiferentes parties
@@ -126,7 +130,7 @@ new Vue({
         },
         // le bouton "déconnexion"
         disconnectUser: function () {
-            console.log('on débranche tout!')
+            // console.log('on débranche tout!')
             token = []
             pseudo = []
             localStorage.setItem("token", JSON.stringify(token));
@@ -142,11 +146,15 @@ new Vue({
             this.seeProfile = false;
         },
 
+
         ///////////////////////
         // pour la connexion //
         ///////////////////////
         loginValidation: function (e) {
-            e.preventDefault();
+            const vue = this
+            if (e) {
+                e.preventDefault();
+            }
             // on récupere l'email et le mot de passe
             let loginToSend = {
                 "email": this.login_email,
@@ -166,11 +174,11 @@ new Vue({
                     // console.log("res")
                     // console.log(res)
                     if (res.ok) {
-                        console.log("utilisateur connecté");
+                        // console.log("utilisateur connecté");
                         return res.json();
 
                     } else {
-                        console.log('email ou mot de passe incorrect')
+                        // console.log('email ou mot de passe incorrect')
                     }
                 })
                 //on ajoute notre token dans localstorage
@@ -185,8 +193,10 @@ new Vue({
                         localStorage.setItem("pseudo", JSON.stringify(pseudo));
                         // maintenant que l'on est connecté et que notre token est dans localstorage
                         // on va afficher l'ensemble des posts
-                        this.isConnected = true;
-                        this.seeAllPosts = true
+                        vue.login_email = ""
+                        vue.login_password = ""
+                        vue.isConnected = true;
+                        vue.seeAllPosts = true
                     }
                 })
                 .catch(function (err) {
@@ -202,39 +212,40 @@ new Vue({
         ///////////////////////
         signupValidation: function (e) {
             e.preventDefault()
-
+            // console.log(this)
+            const vue = this
             // les champs sont ils bien tous remplis ?
             if (!this.signup_email || !this.signup_password || !this.signup_lastName || !this.signup_firstName || !this.signup_password2) {
                 alert("au moins un des champs n'est pas rempli")
                 //a t'on saisi l'adresse mail pro?
             } else if (this.signup_email.match(regexMail) == null) {
-                console.log('veuillez saisir votre email professionnel svp')
+                // console.log('veuillez saisir votre email professionnel svp')
                 this.emailErrorMsgContain = 'veuillez saisir votre email professionnel svp'
                 // le mot de passe respecte t'il les standards minimums de sécurité?
             } else if (this.signup_password.match(regexPassword) == null) {
-                console.log("pwd pb")
+                // console.log("pwd pb")
                 this.passwordErrorMsgContain = `le mot de passe doit avoir au moins:
                      - 1 Majuscule
                      - 1 Minuscule
                      - 1 chiffre
                      - 8 caracteres`
-                console.log("erreur 2")
+                // console.log("erreur 2")
                 // le mot de passe et sa confirmation concordent t'ils?
             } else if (this.signup_password != this.signup_password2) {
-                console.log("mots de passe différents")
+                // console.log("mots de passe différents")
                 this.passwordErrorMsgContain = "mots de passe différents"
                 this.passwordErrorMsgContain2 = "mots de passe différents"
                 // si tout est OK, on envoie
             } else {
                 let sendEmail = this.signup_email;
-                let sensPassword = this.signup_password;
+                let sendPassword = this.signup_password;
                 let sendLastName = this.signup_lastName;
                 let sendFirstName = this.signup_firstName;
                 // on récupere l'email, le mot de passe, le nom et le prénom
                 // console.log("ok go pour l'envoi");
                 let signupToSend = {
                     "email": sendEmail,
-                    "password": sensPassword,
+                    "password": sendPassword,
                     "LastName": sendLastName,
                     "FirstName": sendFirstName
                 };
@@ -249,10 +260,20 @@ new Vue({
                 })
                     .then(function (res) {
                         if (res.ok) {
-                            console.log("compte créé")
+                            // console.log("this fetch")
+                            // console.log(this)
+                            // console.log("compte créé")
                             alert('compte créé')
-                            this.isConnected = false;
-                            return res.json();
+                            vue.isConnected = true;
+                            vue.login_email = vue.signup_email
+                            vue.login_password = vue.signup_password
+                            vue.loginValidation()
+                            vue.signup_email = ""
+                            vue.signup_password = ""
+                            vue.signup_lastName = ""
+                            vue.signup_firstName = ""
+                            vue.signup_password2 = ""
+
                         }
                     })
                     .catch(function (err) {
@@ -270,6 +291,7 @@ new Vue({
         creationValidation: function (e) {
             e.preventDefault();
             this.seeProfile = false
+            const vue = this
             //on recupère l'id du créateur du post (celui qui est connecté)
             let token = localStorage.getItem("token");
 
@@ -283,34 +305,34 @@ new Vue({
             })
                 .then(function (res) {
                     if (res.ok) {
-                        console.log("id récupéré pour creation de post")
+                        // console.log("id récupéré pour creation de post")
                         return res.json();
                     }
                 })
                 .then((id) => {
-                    console.log("id")
-                    console.log(id)
+                    // console.log("id")
+                    // console.log(id)
                 })
 
                 .catch(function (err) {
                     console.error(err)
                     // alert("souci avec l'envoi recupId : réessayez ultérieurement")
-                    console.log("souci avec l'envoi recupId : réessayez ultérieurement")
-                    this.disconnectUser
+                    // console.log("souci avec l'envoi recupId : réessayez ultérieurement")
+                    vue.disconnectUser()
                 });
             // on récupere le titre, l'image s'il y en a une et le contenu du texte
             // en y incorporant le userId
             let formDataCreation = new FormData();
 
-            console.log("creationfile.files[0]")
-            console.log(creationfile.files[0])
-            console.log("formDataCreation avant append")
-            console.log(formDataCreation)
+            // console.log("creationfile.files[0]")
+            // console.log(creationfile.files[0])
+            // console.log("formDataCreation avant append")
+            // console.log(formDataCreation)
             formDataCreation.append("creationfile", creationfile.files[0])
             formDataCreation.append("contenu", this.creationText)
             formDataCreation.append("titre", this.creationTitle)
-            console.log("formDataCreation apres append")
-            console.log(formDataCreation)
+            // console.log("formDataCreation apres append")
+            // console.log(formDataCreation)
 
             // et on envoie le tout
             fetch("http://localhost:3000/api/post", {
@@ -321,17 +343,17 @@ new Vue({
                 body: formDataCreation
             })
                 .then(function (res) {
-                    console.log("post envoyé 1")
+                    // console.log("post envoyé 1")
                     if (res.ok) {
-                        console.log("post envoyé")
+                        // console.log("post envoyé")
                         return res.json();
                     }
                 })
                 .then(function (data) {
-                    console.log(data)
+                    // console.log(data)
                 })
                 .catch(function (err) {
-                    console.error(err)
+                    // console.error(err)
                     alert(err)
                 });
         },
@@ -340,6 +362,7 @@ new Vue({
         // l'affichage des posts //
         ///////////////////////////
         seePosts: function () {
+            const vue = this
             this.seeAllPosts = !this.seeAllPosts
             this.createMode = false
             this.seeProfile = false
@@ -362,14 +385,15 @@ new Vue({
                     }
                 })
                 .then((id) => {
-                    this.whoAmI = id.idFound;
+                    vue.whoAmI = id.idFound;
+                    // console.log(vue.whoAmI)
                 })
 
                 .catch(function (err) {
                     console.error(err)
                     // alert("souci avec l'envoi recupId : réessayez ultérieurement")
-                    console.log("souci avec l'envoi recupId : réessayez ultérieurement")
-                    this.disconnectUser
+                    // console.log("souci avec l'envoi recupId : réessayez ultérieurement")
+                    vue.disconnectUser()
                 });
 
             fetch("http://localhost:3000/api/post", {
@@ -384,20 +408,20 @@ new Vue({
                     if (res.ok) {
                         return res.json();
                     } else {
-                        console.log('utilisateur ou mot de passe incorrect')
-                        this.disconnectUser
+                        // console.log('utilisateur ou mot de passe incorrect')
+                        vue.disconnectUser()
                     }
                 })
                 .then((data) => {
-                    this.posts = data.results
+                    vue.posts = data.results
                     // console.log("this.posts")
                     // console.log(this.posts)
                 })
                 .catch(function (err) {
                     console.error(err)
                     // alert("souci avec le serveur : connexion momentanément impossible")
-                    console.log("souci avec le serveur : connexion momentanément impossible")
-                    this.disconnectUser
+                    // console.log("souci avec le serveur : connexion momentanément impossible")
+                    vue.disconnectUser()
                 });
         },
 
@@ -406,6 +430,7 @@ new Vue({
         // l'affichage d'un post //
         ///////////////////////////
         coucou: function (idPost) {
+            const vue = this
             // console.log(idPost)
             this.isSelected = true;
             // on recupère l'id de l'utilisateur connecté
@@ -425,19 +450,23 @@ new Vue({
                     if (res.ok) {
                         return res.json();
                     } else {
-                        console.log('utilisateur ou mot de passe incorrect')
+                        // console.log('utilisateur ou mot de passe incorrect')
                     }
                 })
                 .then((data) => {
                     // console.log('resultats du getOne')
                     // console.log(data)
                     const whatISee = data.results[0]
-                    this.seeAllPosts = false
-                    this.selectedTitle = whatISee.titre
-                    this.selectedId = whatISee.id
-                    this.selectedImageUrl = whatISee.imageUrl
-                    this.selectedContain = whatISee.contenu
-                    this.selectedUser = whatISee.pseudo
+                    // console.log("whatISee")
+                    // console.log(whatISee)
+                    vue.seeAllPosts = false
+                    vue.selectedTitle = whatISee.titre
+                    vue.selectedId = whatISee.id
+                    vue.selectedImageUrl = whatISee.imageUrl
+                    vue.selectedContain = whatISee.contenu
+                    vue.selectedUser = whatISee.pseudo
+                    vue.selectedUserId = whatISee.userId
+                    vue.selectedUserAdmin = whatISee.userId
 
 
                     // console.log('whoAmI')
@@ -464,13 +493,13 @@ new Vue({
                         // console.log(res)
                         return res.json();
                     } else {
-                        console.log('utilisateur ou mot de passe incorrect')
+                        // console.log('utilisateur ou mot de passe incorrect')
                     }
                 })
                 .then((data) => {
                     // console.log('resultats du getOne')
                     // console.log(data)
-                    this.allComments = data.results
+                    vue.allComments = data.results
                     // console.log(data.results[0])
                     // console.log("data.results")
                     // console.log(data.results)
@@ -487,12 +516,13 @@ new Vue({
         // ajout commentaire //
         ///////////////////////
         commenter: function () {
-            console.log("youpi")
+            // console.log("youpi")
             this.addComment = !this.addComment
         },
 
         createComment: function (e) {
-            e.preventDefault();
+            // e.preventDefault();
+            const vue = this
             //on recupère l'id du créateur du post (celui qui est connecté)
             let token = localStorage.getItem("token");
 
@@ -506,28 +536,28 @@ new Vue({
             })
                 .then(function (res) {
                     if (res.ok) {
-                        console.log("id récupéré pour commentaire")
+                        // console.log("id récupéré pour commentaire")
                         return res.json();
                     }
                 })
                 .then((id) => {
                     // console.log("id")
-                    console.log(id)
+                    // console.log(id)
                 })
 
                 .catch(function (err) {
                     console.error(err)
                     // alert("souci avec l'envoi recupId : réessayez ultérieurement")
-                    console.log("souci avec l'envoi recupId : réessayez ultérieurement")
-                    this.disconnectUser
+                    // console.log("souci avec l'envoi recupId : réessayez ultérieurement")
+                    vue.disconnectUser()
                 });
             // on récupere le titre, l'image s'il y en a une et le contenu du texte
             // en y incorporant le userId
             let formDataCommentCreation = new FormData();
-            console.log("this.selectedId");
-            console.log(this.selectedId);
-            console.log("this.commentText")
-            console.log(this.commentText)
+            // console.log("this.selectedId");
+            // console.log(this.selectedId);
+            // console.log("this.commentText")
+            // console.log(this.commentText)
 
             formDataCommentCreation.append("postId", this.selectedId)
             formDataCommentCreation.append("contenu", this.commentText)
@@ -537,8 +567,8 @@ new Vue({
             }
 
             const sendToUrl = `http://localhost:3000/api/post/${this.selectedId}`
-            console.log("sendToUrl")
-            console.log(sendToUrl)
+            // console.log("sendToUrl")
+            // console.log(sendToUrl)
 
             // et on envoie le tout
             fetch(sendToUrl, {
@@ -553,7 +583,7 @@ new Vue({
             })
                 .then(function (res) {
                     if (res.ok) {
-                        console.log("commentaire envoyé")
+                        // console.log("commentaire envoyé")
                         return res.json();
                     }
                 })
@@ -567,7 +597,7 @@ new Vue({
         // modification de post //
         //////////////////////////
         modifier: function () {
-            console.log("modifions")
+            // console.log("modifions")
             this.goToModify = !this.goToModify
         },
         modificationValidation: function (e) {
@@ -598,7 +628,7 @@ new Vue({
                 .then(function (res) {
                     if (res.ok) {
                         // console.log(res)
-                        console.log("post modifié")
+                        // console.log("post modifié")
                         // this.coucou()
                         // return res.json();
                     }
@@ -617,8 +647,8 @@ new Vue({
         // suppression de post //
         /////////////////////////
         supprimer: function () {
-
-            console.log("supprimons")
+            const vue = this
+            // console.log("supprimons")
 
             //on recupère l'id de celui qui veut supprimer le post
             let token = localStorage.getItem("token");
@@ -632,18 +662,18 @@ new Vue({
             })
                 .then(function (res) {
                     if (res.ok) {
-                        console.log("id récupéré pour affichage post")
+                        // console.log("id récupéré pour affichage post")
                         return res.json();
                     }
                 })
                 .then((id) => {
-                    this.whoAmI = id.idFound;
+                    vue.whoAmI = id.idFound;
                 })
                 .catch(function (err) {
                     console.error(err)
                     // alert("souci avec l'envoi recupId : réessayez ultérieurement")
-                    console.log("souci avec l'envoi recupId : réessayez ultérieurement")
-                    this.disconnectUser
+                    // console.log("souci avec l'envoi recupId : réessayez ultérieurement")
+                    vue.disconnectUser()
                 });
             selectedUrl = `http://localhost:3000/api/post/${this.selectedId}`
             fetch(selectedUrl, {
@@ -655,21 +685,22 @@ new Vue({
                 },
             })
                 .then(() => {
-                    this.goToModify = false;
-                    this.seeAllPosts = true
+                    vue.goToModify = false;
+                    vue.seeAllPosts = true
                 })
                 .catch(() => {
-                    console.log('souci')
+                    // console.log('souci')
                 })
         },
     },
     mounted: function () {
+        const vue = this
         // a t'on deja un token? et est il valable?
         let token = localStorage.getItem("token");
         // console.log(token)
         // si le token est vide
         if (token == null) {
-            console.log("personne de connecté")
+            // console.log("personne de connecté")
             this.isConnected = false;
             this.menuOn = false;
             this.createMode = false;
@@ -690,7 +721,7 @@ new Vue({
                 .then(function (res) {
                     if (res.ok) {
                         // console.log(res)
-                        this.isConnected = true
+                        vue.isConnected = true
                         return res.json();
                     }
                 })
@@ -704,36 +735,43 @@ new Vue({
                         localStorage.setItem("pseudo", JSON.stringify(pseudo));
                         localStorage.removeItem("token");
                         localStorage.removeItem("pseudo");
-                        this.isConnected = false;
-                        this.menuOn = false;
-                        this.createMode = false;
-                        this.loginOn = false;
-                        this.signupOn = false;
-                        this.whoAmI = "";
-                        this.seeProfile = false;
+                        vue.isConnected = false;
+                        vue.menuOn = false;
+                        vue.createMode = false;
+                        vue.loginOn = false;
+                        vue.signupOn = false;
+                        vue.whoAmI = "";
+                        vue.seeProfile = false;
                     } else {
-                        this.isConnected = true
+                        vue.isConnected = true
                     }
                 })
 
                 .catch(function (err) {
                     console.error(err)
                     // alert("souci avec l'envoi recupId : réessayez ultérieurement")
-                    console.log("souci avec l'envoi recupId : réessayez ultérieurement")
+                    // console.log("souci avec l'envoi recupId : réessayez ultérieurement")
                     token = []
                     pseudo = []
                     localStorage.setItem("token", JSON.stringify(token));
                     localStorage.setItem("pseudo", JSON.stringify(pseudo));
                     localStorage.removeItem("token");
                     localStorage.removeItem("pseudo");
-                    this.isConnected = false;
-                    this.menuOn = false;
-                    this.createMode = false;
-                    this.loginOn = false;
-                    this.signupOn = false;
-                    this.whoAmI = "";
-                    this.seeProfile = false;
+                    vue.isConnected = false;
+                    vue.menuOn = false;
+                    vue.createMode = false;
+                    vue.loginOn = false;
+                    vue.signupOn = false;
+                    vue.whoAmI = "";
+                    vue.seeProfile = false;
                 })
+        }
+    },
+    computed: {
+        copyright() {
+            const currentYear = new Date().getFullYear()
+
+            return `Copyright ${this.entreprise} ${currentYear}`
         }
     }
 })

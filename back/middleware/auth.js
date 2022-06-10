@@ -22,8 +22,8 @@ module.exports = (req, res, next) => {
             next();
         }
     } catch (error) {
-        console.log('souci comparaison des tokens')
-        console.log(error)
+        // console.log('souci comparaison des tokens')
+        // console.log(error)
         res.status(401).json({ error: error | 'requête non authentifiée' });
     }
 };
