@@ -669,7 +669,6 @@ new Vue({
         // console.log(token)
         // si le token est vide
         if (token == null) {
-            console.log('1')
             console.log("personne de connecté")
             this.isConnected = false;
             this.menuOn = false;
