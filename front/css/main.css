@@ -414,6 +414,12 @@ h2 {
   text-align: center;
   border-radius: 10px;
 }
+.menu_contain span {
+  display: none;
+}
+.menu_contain i {
+  font-size: 150%;
+}
 
 .connection {
   margin: 0;

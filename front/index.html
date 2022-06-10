@@ -23,15 +23,15 @@
             <div id="menu" v-show ="menuOn" v-show ="isConnected" >
                 <div id="user_disconnected" class="menu_contain" @click="disconnectUser">
                     <i class="fas fa-user-slash"></i>
-                    Déconnexion
+                    <span>Déconnexion</span>
                 </div>
                 <div id="user_profile" class="menu_contain" @click="userProfile">
                     <i class="far fa-id-card"></i>
-                    profil
+                    <span>profil</span>
                 </div>
                 <div id="create" class="menu_contain" @click="create">
                     <i class="fas fa-plus"></i>
-                    Créer
+                    <span>Créer</span>
                 </div>
             </div>
             <container id = "access" v-show ="!isConnected">
@@ -71,12 +71,12 @@
                     <h2>Profil utilisateur</h2>
                     <div class="contenu_creation">
                         <div class="profil">
-                            <h3>votre nom : {{ nom }}</h3>
-                            <input  v-model="nom" type="text"/>
+                            <label for = "nom"><h3>votre nom : {{ nom }}</h3></label>
+                            <input  id="nom" v-model="nom" type="text"/>
                         </div>
                         <div class="profil">
-                            <h3>votre prénom : {{ prenom }}</h3>
-                            <input  v-model="prenom" type="text"/>
+                            <label for = "prenom"><h3>votre prénom : {{ prenom }}</h3></label>
+                            <input id="prenom" v-model="prenom" type="text"/>
                         </div>
                     </div>
                 </div>

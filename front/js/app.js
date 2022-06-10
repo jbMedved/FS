@@ -113,6 +113,7 @@ new Vue({
         // le bouton "profil"
         userProfile: function () {
             this.seeProfile = !this.seeProfile
+            this.createMode = false;
             // console.log(this.seeProfile)
             let pseudo = localStorage.getItem("pseudo");
             // console.log(pseudo)
@@ -185,6 +186,7 @@ new Vue({
                         // maintenant que l'on est connecté et que notre token est dans localstorage
                         // on va afficher l'ensemble des posts
                         this.isConnected = true;
+                        this.seeAllPosts = true
                     }
                 })
                 .catch(function (err) {
@@ -267,7 +269,7 @@ new Vue({
         /////////////////////////
         creationValidation: function (e) {
             e.preventDefault();
-
+            this.seeProfile = false
             //on recupère l'id du créateur du post (celui qui est connecté)
             let token = localStorage.getItem("token");
 
@@ -340,6 +342,8 @@ new Vue({
         seePosts: function () {
             this.seeAllPosts = !this.seeAllPosts
             this.createMode = false
+            this.seeProfile = false
+            this.menuOn = false
             // console.log('seePosts')
             //on recupère l'id du comte connecté 
             let token = localStorage.getItem("token");
@@ -662,7 +666,7 @@ new Vue({
     mounted: function () {
         // a t'on deja un token? et est il valable?
         let token = localStorage.getItem("token");
-        console.log(token)
+        // console.log(token)
         // si le token est vide
         if (token == null) {
             console.log('1')
@@ -692,7 +696,7 @@ new Vue({
                     }
                 })
                 .then((id) => {
-                    console.log("id user trouvé")
+                    // console.log("id user trouvé")
                     // console.log(id)
                     if (id == null || id == undefined || id == []) {
                         token = []
