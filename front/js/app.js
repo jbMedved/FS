@@ -259,7 +259,10 @@ new Vue({
                     body: JSON.stringify(signupToSend)
                 })
                     .then(function (res) {
+                        res.status == 409 ? alert("un compte existe déja avec cette adresse email") : null
                         if (res.ok) {
+                            console.log("1")
+                            console.log(res);
                             // console.log("this fetch")
                             // console.log(this)
                             // console.log("compte créé")
@@ -273,10 +276,10 @@ new Vue({
                             vue.signup_lastName = ""
                             vue.signup_firstName = ""
                             vue.signup_password2 = ""
-
                         }
                     })
                     .catch(function (err) {
+                        console.log("2")
                         console.error(err)
                         this.isConnected = false;
                         alert("souci avec la création de compte : réessayez ultérieurement")
