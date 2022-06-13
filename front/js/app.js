@@ -348,6 +348,7 @@ new Vue({
                 .then(function (res) {
                     // console.log("post envoyé 1")
                     if (res.ok) {
+                        location.reload()
                         // console.log("post envoyé")
                         return res.json();
                     }
@@ -630,6 +631,7 @@ new Vue({
             })
                 .then(function (res) {
                     if (res.ok) {
+                        location.reload()
                         // console.log(res)
                         // console.log("post modifié")
                         // this.coucou()
@@ -690,6 +692,7 @@ new Vue({
                 .then(() => {
                     vue.goToModify = false;
                     vue.seeAllPosts = true
+                    location.reload()
                 })
                 .catch(() => {
                     // console.log('souci')
