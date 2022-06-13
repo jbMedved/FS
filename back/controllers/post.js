@@ -73,7 +73,7 @@ exports.getAllPosts = async (req, res) => {
             "SELECT post.id, post.titre, post.contenu, post.imageUrl, post.timestamp, post.userId, user.pseudo FROM post JOIN user on post.userId=user.id order by post.timestamp DESC",
             (error, results) => {
                 if (error) {
-                    console.log("erreur dans la requete d'affichage des posts");
+                    // console.log("erreur dans la requete d'affichage des posts");
                     res.json({ error });
                 } else {
                     // console.log(results);
@@ -83,7 +83,7 @@ exports.getAllPosts = async (req, res) => {
         );
     }
     catch (err) {
-        console.log('souci avec getAllPosts')
+        // console.log('souci avec getAllPosts')
         res.status(500).json({ error: err });
     }
 }
@@ -97,7 +97,7 @@ exports.getOnePost = async (req, res) => {
             "SELECT post.id, post.titre, post.contenu, post.imageUrl, post.timestamp, post.userId, user.pseudo, user.admin FROM post JOIN user on post.userId=user.id where post.id = ? ", [id],
             (error, results) => {
                 if (error) {
-                    console.log("erreur dans la requete d'affichage du post");
+                    // console.log("erreur dans la requete d'affichage du post");
                     res.json({ error });
                 } else {
                     // console.log("getOnePost")
@@ -111,18 +111,18 @@ exports.getOnePost = async (req, res) => {
                                 "SELECT commentaire.id, commentaire.contenu, commentaire.userId, commentaire.postId, commentaire.timestamp, post.id FROM commentaire JOIN post on commentaire.postId=post.id order by post.timestamp DESC",
                                 (error, results) => {
                                     if (error) {
-                                        console.log("erreur dans la requete d'affichage du post");
+                                        // console.log("erreur dans la requete d'affichage du post");
                                         res.json({ error });
                                     } else {
-                                        console.log("getAllComments")
-                                        console.log(results);
+                                        // console.log("getAllComments")
+                                        // console.log(results);
                                         res.status(200).json({ results });
                                     }
                                 }
                             );
                         }
                         catch (err) {
-                            console.log('souci avec getAllPosts')
+                            // console.log('souci avec getAllPosts')
                             res.status(500).json({ error: err });
                         }
                     }
@@ -131,7 +131,7 @@ exports.getOnePost = async (req, res) => {
         );
     }
     catch (err) {
-        console.log('souci avec getOnePost')
+        // console.log('souci avec getOnePost')
         res.status(500).json({ error: err });
     }
 
