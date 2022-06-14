@@ -1,24 +1,21 @@
 // ici on importe mysql
 const mysql = require('mysql');
+
+// ici on importe nos variables d'environnement
+const dotenv = require('dotenv');
+const resultat = dotenv.config()
+
+
 /////////////////////////////////////////////
 // on definit les parametres de connexion: //
 /////////////////////////////////////////////
 
-// // clever cloud
-// let dbConfig = {
-//     host: 'bdujnlfj9e4qt3hbn3dl-mysql.services.clever-cloud.com',
-//     database: 'bdujnlfj9e4qt3hbn3dl',
-//     user: 'usbfddmz2brab5up',
-//     password: 'ZBX0j8vl9T575ScL5b8A',
-// };
-
 //mysqlworkbench
 let dbConfig = {
-    host: 'localhost',
-    database: 'groupomania',
-    user: 'root',
-    password: 'Melina0701',
-    // port: "3306",
+    host: process.env.DB_host,
+    database: process.env.DB_schema,
+    user: process.env.DB_user,
+    password: process.env.DB_pwd,
 };
 
 //////////////////////////////////////////////////
